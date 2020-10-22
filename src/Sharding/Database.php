@@ -3,7 +3,7 @@
  *
  * @description sharding
  *
- * @package     Components\Sharding
+ * @package     Db\Sharding
  *
  * @time        Tue Oct  1 00:22:54 2019
  *
@@ -18,7 +18,7 @@ class Database
 	 *
 	 * @var int
 	 */
-	private $maxCount;
+	private int $maxCount;
 
 	/**
 	 * @description construct
@@ -33,11 +33,11 @@ class Database
 	/**
 	 * @description get sharding key
 	 *
-	 * @param mixed $id
+	 * @param string | int $id
 	 *
 	 * @return int
 	 */
-	public function getShardingKey($id) : int
+	public function getShardingKey(string | int $id) : int
 	{
 		if (!ctype_digit(strval($id))) {
 			$id = hexdec(hash('crc32', $id));

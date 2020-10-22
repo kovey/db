@@ -135,5 +135,14 @@ Interface AdapterInterface
      *
      * @return Array | bool
      */
-    public function fetch($sth);
+    public function fetch($sth) : Array | bool;
+
+    /**
+     * @description execute sql
+     *
+     * @param string $sql
+     *
+     * @return int
+     */
+    public function exec($sql) : int;
 }

@@ -13,4 +13,9 @@ namespace Kovey\Db\Exception;
 
 class DbException extends \RuntimeException
 {
+    public function __construct(string $msg, string | int $code)
+    {
+        parent::__construct($msg, 0);
+        $this->code = $code;
+    }
 }

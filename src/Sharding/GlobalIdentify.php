@@ -3,7 +3,7 @@
  *
  * @description global uniqid
  *
- * @package     Components\Sharding
+ * @package     Db\Sharding
  *
  * @time        Tue Oct  1 00:47:28 2019
  *
@@ -12,7 +12,7 @@
 namespace Kovey\Db\Sharding;
 
 use Kovey\Db\Sql\Update;
-use Kovey\Redis\Redis;
+use Kovey\Redis\Redis\Redis;
 use Kovey\Db\Mysql;
 
 class GlobalIdentify
@@ -37,40 +37,40 @@ class GlobalIdentify
 	 *
 	 * @var Kovey\Redis\Redis
 	 */
-	private $redis;
+	private Redis $redis;
 
 	/**
 	 * @description mysql
 	 *
 	 * @var Kovey\Db\Mysql
 	 */
-	private $mysql;
+	private Mysql $mysql;
 
 	/**
 	 * @description table
 	 *
 	 * @var string
 	 */
-	private $identifyTable;
+	private string $identifyTable;
 
 	/**
 	 * @description field
 	 *
 	 * @var string
 	 */
-	private $identifyField;
+	private string $identifyField;
 
 	/**
 	 * @description primary key
 	 *
 	 * @var string
 	 */
-	private $primaryField;
+	private string $primaryField;
 
 	/**
 	 * @description construct
 	 *
-	 * @param Kovey\Redis\Redis $redis
+	 * @param Kovey\Redis\Redis\Redis $redis
 	 *
 	 * @param Kovey\Db\Mysql $mysql
 	 *
@@ -165,12 +165,22 @@ class GlobalIdentify
 		return $id;
 	}
 
-    private function lock()
+    /**
+     * @description lock
+     *
+     * @return bool
+     */
+    public function lock() : bool
     {
         return $this->redis->setNx(self::GLOBAL_LOCKER_KEY . $this->identifyTable, $this->identifyTable);
     }
 
-    public function unlock()
+    /**
+     * @description unlock
+     *
+     * @return bool
+     */
+    public function unlock() : bool
     {
         return $this->redis->del(self::GLOBAL_LOCKER_KEY . $this->identifyTable);
     }

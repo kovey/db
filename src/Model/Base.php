@@ -26,11 +26,11 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
 	 *
-	 * @return int
+	 * @return string | int $shardingKey
 	 *
 	 * @throws DbException
 	 */
-	public function insert(Array $data, DbInterface $db, $shardingKey = -1) : int
+	public function insert(Array $data, DbInterface $db, string | int $shardingKey = -1) : int
 	{
         return parent::insert($data, $db, $shardingKey);
 	}
@@ -44,11 +44,11 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
 	 *
-	 * @return int
+	 * @param string | int $shardingKey
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function update(Array $data, Array $condition, DbInterface $db, $shardingKey = -1) : int
+	public function update(Array $data, Array $condition, DbInterface $db, string | int $shardingKey = -1) : int
 	{
         return parent::update($data, $condition, $db, $shardingKey);
 	}
@@ -61,12 +61,14 @@ abstract class Base extends ShardingBase
 	 * @param Array $columns
 	 *
 	 * @param DbInterface $db
+     *
+	 * @param string | int $shardingKey
 	 *
 	 * @return Array
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function fetchRow(Array $condition, Array $columns, DbInterface $db, $shardingKey = -1)
+	public function fetchRow(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1)
 	{
         return parent::fetchRow($condition, $columns, $db, $shardingKey);
 	}
@@ -79,12 +81,14 @@ abstract class Base extends ShardingBase
 	 * @param Array  $columns
 	 *
 	 * @param DbInterface $db
+     *
+	 * @param string | int $shardingKey
 	 *
 	 * @return Array
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function fetchAll(Array $condition, Array $columns, DbInterface $db, $shardingKey = -1)
+	public function fetchAll(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1)
 	{
         return parent::fetchAll($condition, $columns, $db, $shardingKey);
 	}
@@ -95,12 +99,14 @@ abstract class Base extends ShardingBase
 	 * @param Array $rows
 	 *
 	 * @param DbInterface $db
+     *
+	 * @param string | int $shardingKey
 	 *
 	 * @return int
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function batchInsert(Array $rows, DbInterface $db, $shardingKey = -1) : int
+	public function batchInsert(Array $rows, DbInterface $db, string | int $shardingKey = -1) : int
 	{
         return parent::batchInsert($rows, $db, $shardingKey);
 	}
@@ -113,12 +119,14 @@ abstract class Base extends ShardingBase
 	 * @param Array $condition
 	 *
 	 * @param DbInterface $db
+     *
+	 * @param string | int $shardingKey
 	 *
 	 * @return int
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function delete(Array $condition, DbInterface $db, $shardingKey = -1) : int
+	public function delete(Array $condition, DbInterface $db, string | int $shardingKey = -1) : int
 	{
         return parent::delete($condition, $db, $shardingKey);
 	}
@@ -143,10 +151,10 @@ abstract class Base extends ShardingBase
      * @param string $group
      *
      * @param Array $join
-	 *
+     *
 	 * @return Array | bool
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
     public function fetchByPage(Array $condition, Array $columns, int $page, int $pageSize, DbInterface $db, string $tableAs = '', string $order = '', string $group = '', Array $join = array())
     {

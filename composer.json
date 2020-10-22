@@ -1,14 +1,14 @@
 {
     "name": "kovey/db",
-    "type": "project",
-    "description": "The Kovey Framework Database",
+    "type": "library",
+    "description": "Database Of The Kovey Framework",
     "keywords": [
         "framework",
         "kovey",
         "db",
         "php"
     ],
-    "license": "Apache",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Kovey",
@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^7.3",
+        "php": ">=8.0",
         "kovey/redis": "^1.0"
     },
     "require-dev": {

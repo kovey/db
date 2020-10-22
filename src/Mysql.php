@@ -284,6 +284,8 @@ class Mysql implements DbInterface
                 }
             }
             return $sth;
+        } catch (\PDOException $e) {
+            throw new DbException($e->getMessage(), $e->getCode());
         } catch (DbException $e) {
             throw $e;
         } finally {

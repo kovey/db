@@ -12,6 +12,7 @@
 namespace Kovey\Db\Adapter;
 
 use Kovey\Db\AdapterInterface;
+use Kovey\Db\Exception\DbException;
 
 class Pdo implements AdapterInterface
 {
@@ -20,26 +21,44 @@ class Pdo implements AdapterInterface
      *
      * @var PDO
      */
-    private $connection;
+    private \PDO $connection;
 
     /**
      * @description config
      *
      * @var Config
      */
-    private $config;
+    private Config $config;
+
+    /**
+     * @description error
+     *
+     * @var string
+     */
+    private string $error;
 
     public function __construct(Config $config)
     {
         $this->config = $config;
+        $this->error = '';
     }
 
-    public function connect(Config $config) : bool
+    /**
+     * @description connect to server
+     *
+     * @return bool
+     */
+    public function connect() : bool
     {
-        $this->connection = new \PDO(
-            sprintf('mysql:dbname=%s;host=%s;port=%s;charset=%s', $this->config->getDatabase(), $this->config->getHost(), $this->config->getPort(), $this->config->getCharset()),
-            $this->config->getUser(), $this->config->getPassword(), $this->config->getOptions()
-        );
+        try {
+            $this->connection = new \PDO(
+                sprintf('mysql:dbname=%s;host=%s;port=%s;charset=%s', $this->config->getDatabase(), $this->config->getHost(), $this->config->getPort(), $this->config->getCharset()),
+                $this->config->getUser(), $this->config->getPassword(), $this->config->getOptions()
+            );
+        } catch (\PDOException $e) {
+            $this->error = $e->getMessage();
+            return false;
+        }
 
         return true;
     }
@@ -51,6 +70,10 @@ class Pdo implements AdapterInterface
 	 */
 	public function getError() : string
 	{
+        if (empty($this->connection)) {
+            return $this->error;
+        }
+
         return sprintf(
             'error code: %s, error msg: %s',
             $this->connection->errorCode(), implode(',', $this->connection->errorInfo())
@@ -211,7 +234,7 @@ class Pdo implements AdapterInterface
      */
     public function errorInfo() : string
     {
-        return $this->connection->errorInfo();
+        return implode(';', $this->connection->errorInfo());
     }
 
     /**
@@ -243,8 +266,37 @@ class Pdo implements AdapterInterface
      *
      * @return Array | bool
      */
-    public function fetch($sth)
+    public function fetch($sth) : Array | bool
     {
         return $sth->fetch();
+    }
+
+    /**
+     * @description execute sql
+     *
+     * @param string $sql
+     *
+     * @return int
+     */
+    public function exec($sql) : int
+    {
+        try {
+            return $this->connection->exec($sql);
+        } catch (\PDOException $e) {
+            if ($this->connection->inTransaction()) {
+                throw new DbException($e->getMessage(), $e->getCode());
+            }
+
+            if ($this->isDisconneted()) {
+                try {
+                    $this->connect();
+                    return $this->connection->exec($sql);
+                } catch (\PDOException $e) {
+                    throw new DbException($e->getMessage(), $e->getCode());
+                }
+            }
+
+            throw new DbException($e->getMessage(), $e->getCode());
+        }
     }
 }

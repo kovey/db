@@ -22,40 +22,51 @@ class Swoole implements AdapterInterface
      *
      * @var MySQL
      */
-    private $connection;
+    private MySQL $connection;
 
     /**
      * @description config
      *
      * @var Config
      */
-    private $config;
+    private Config $config;
 
     /**
      * @description is in transation
      *
      * @var bool
      */
-    private $isInTransaction = false;
+    private bool $isInTransaction = false;
+
+    /**
+     * @description error
+     */
+    private string $error;
 
     public function __construct(Config $config)
     {
         $this->connection = new MySQL();
         $this->config = $config;
+        $this->error = '';
     }
 
     public function connect() : bool
     {
-        $this->isInTransaction = false;
-        return $this->connection->connect(array(
-			'host' => $this->config->getHost(),
-			'port' => $this->config->getPort(),
-			'user' => $this->config->getUser(),
-			'password' => $this->config->getPassword(),
-			'database' => $this->config->getDatabase(),
-			'charset' => $this->config->getCharset(),
-			'fetch_mode' => true
-        ));
+        try {
+            $this->isInTransaction = false;
+            return $this->connection->connect(array(
+                'host' => $this->config->getHost(),
+                'port' => $this->config->getPort(),
+                'user' => $this->config->getUser(),
+                'password' => $this->config->getPassword(),
+                'database' => $this->config->getDatabase(),
+                'charset' => $this->config->getCharset(),
+                'fetch_mode' => true
+            ));
+        } catch (\Swoole\Coroutine\MySQL\Exception $e) {
+            $this->error = $e->getMessage();
+            return false;
+        }
     }
 
 	/**
@@ -65,6 +76,10 @@ class Swoole implements AdapterInterface
 	 */
 	public function getError() : string
 	{
+        if (!empty($this->error)) {
+            return $this->error;
+        }
+
         return sprintf(
             'error code: %s, error msg: %s, connect error code: %s, connect error msg: %s',
             $this->connection->errno, $this->connection->error, $this->connection->connect_errno, $this->connection->connect_error
@@ -285,7 +300,7 @@ class Swoole implements AdapterInterface
      *
      * @return Array | bool
      */
-    public function fetch($sth)
+    public function fetch($sth) : Array | bool
     {
         $row = false;
         while ($ret = $sth->fetch()) {
@@ -293,5 +308,66 @@ class Swoole implements AdapterInterface
         }
 
         return $row;
+    }
+
+    /**
+     * @description execute sql
+     *
+     * @param string $sql
+     *
+     * @return int
+     */
+    public function exec($sql) : int
+    {
+		if (!$this->connection->connected) {
+            if ($this->isInTransaction) {
+                throw new DbException($this->connection->error, $this->connection->errno);
+            }
+            if (!$this->connect()) {
+                throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
+            }
+		}
+
+        $result = $this->connection->prepare($sql);
+		if ($result === false) {
+			if ($this->isDisconneted()) {
+                if ($this->isInTransaction) {
+                    throw new DbException($this->connection->error, $this->connection->errno);
+                }
+                if (!$this->connect()) {
+                    throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
+                }
+			}
+
+			$result = $this->connection->prepare($sql);
+		}
+
+        if ($result === false) {
+            throw new DbException($this->connection->error, $this->connection->errno);
+        }
+
+        $result = $result->execute(array());
+        if ($result === false) {
+			if ($this->isDisconneted()) {
+                if ($this->isInTransaction) {
+                    throw new DbException($this->connection->error, $this->connection->errno);
+                }
+                if (!$this->connect()) {
+                    throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
+                }
+			}
+
+			$result = $this->connection->prepare($sql);
+            if ($result === false) {
+                throw new DbException($this->connection->error, $this->connection->errno);
+            }
+            $result = $result->execute(array());
+        }
+
+        if ($result === false) {
+            throw new DbException($this->connection->error, $this->connection->errno);
+        }
+
+        return $this->connection->affected_rows;
     }
 }

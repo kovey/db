@@ -26,7 +26,7 @@ abstract class ShardingBase
 	 *
 	 * @var string
 	 */
-	protected $tableName;
+	protected string $tableName;
 
     /**
      * @description database count
@@ -34,7 +34,7 @@ abstract class ShardingBase
      * @var int
      *
      */
-    protected $databaseCount = 1;
+    protected int $databaseCount = 1;
 
 	/**
 	 * @description insert data
@@ -43,13 +43,13 @@ abstract class ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-     * @param mixed $shardingKey
+     * @param string | int $shardingKey
 	 *
 	 * @return int
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function insert(Array $data, DbInterface $db, $shardingKey) : int
+	public function insert(Array $data, DbInterface $db, string | int $shardingKey) : int
 	{
         $shardingKey = $this->getShardingKey($shardingKey);
 		$insert = new Insert($this->getTableName($shardingKey));
@@ -69,13 +69,13 @@ abstract class ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-     * @param mixed $shardingKey
+     * @param string | int $shardingKey
 	 *
 	 * @return int
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function update(Array $data, Array $condition, DbInterface $db, $shardingKey) : int
+	public function update(Array $data, Array $condition, DbInterface $db, string | int $shardingKey) : int
 	{
         $shardingKey = $this->getShardingKey($shardingKey);
 		$update = new Update($this->getTableName($shardingKey));
@@ -96,13 +96,13 @@ abstract class ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-     * @param mixed $shardingKey
+     * @param string | int $shardingKey
 	 *
 	 * @return Array | bool
 	 *
 	 * @throws DbException
 	 */
-	public function fetchRow(Array $condition, Array $columns, DbInterface $db, $shardingKey)
+	public function fetchRow(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey) : Array | bool
 	{
 		if (empty($columns)) {
 			throw new DbException('selected columns is empty.', 1004); 
@@ -121,13 +121,13 @@ abstract class ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-     * @param mixed $shardingKey
+     * @param string | int $shardingKey
 	 *
 	 * @return Array | false
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function fetchAll(Array $condition, Array $columns, DbInterface $db, $shardingKey)
+	public function fetchAll(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey) : Array | bool
 	{
 		if (empty($columns)) {
 			throw new DbException('selected columns is empty.', 1005); 
@@ -144,13 +144,13 @@ abstract class ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-     * @param mixed $shardingKey
+     * @param string | int $shardingKey
 	 *
 	 * @return int
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function batchInsert(Array $rows, DbInterface $db, $shardingKey) : int
+	public function batchInsert(Array $rows, DbInterface $db, string | int $shardingKey) : int
 	{
 		if (empty($rows)) {
 			throw new DbException('rows is empty.', 1006);
@@ -179,13 +179,13 @@ abstract class ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-     * @param mixed $shardingKey
+     * @param string | int $shardingKey
 	 *
 	 * @return int
 	 *
-	 * @throws Exception
+	 * @throws DbException
 	 */
-	public function delete(Array $condition, DbInterface $db, $shardingKey) : int
+	public function delete(Array $condition, DbInterface $db, string | int $shardingKey) : int
 	{
         $shardingKey = $this->getShardingKey($shardingKey);
 		$delete = new Delete($this->getTableName($shardingKey));
@@ -212,11 +212,11 @@ abstract class ShardingBase
     /**
      * @description get sharding key
      *
-     * @param mixed $shardingKey
+     * @param string | int $shardingKey
      *
      * @return int
      */
-    public function getShardingKey($shardingKey) : int
+    public function getShardingKey(string | int $shardingKey) : int
     {
         if (is_numeric($shardingKey) && $shardingKey < 0) {
             return $shardingKey;

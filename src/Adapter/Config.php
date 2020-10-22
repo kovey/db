@@ -11,6 +11,8 @@
  */
 namespace Kovey\Db\Adapter;
 
+use Kovey\Db\Exception\DbException;
+
 class Config
 {
 	/**
@@ -86,9 +88,14 @@ class Config
         }
     }
 
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
-        throw new \Exception("$name is unkown");
+        throw new DbException("$name is unkown");
+    }
+
+    public function __get(string $name)
+    {
+        throw new DbException("$name is unkown");
     }
 
     public function getDatabase()
