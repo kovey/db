@@ -90,12 +90,12 @@ class Config
 
     public function __set(string $name, $value)
     {
-        throw new DbException("$name is unkown");
+        throw new DbException("$name is unkown", 1008);
     }
 
     public function __get(string $name)
     {
-        throw new DbException("$name is unkown");
+        throw new DbException("$name is unkown", 1009);
     }
 
     public function getDatabase()

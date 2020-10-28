@@ -15,6 +15,7 @@ use Kovey\Db\Sql\Update;
 use Kovey\Db\Sql\Insert;
 use Kovey\Db\Sql\Select;
 use Kovey\Db\Sql\Delete;
+use Kovey\Db\Sql\BatchInsert;
 
 interface DbInterface
 {
@@ -76,11 +77,11 @@ interface DbInterface
 	 *
 	 * @param Array $columns
 	 *
-	 * @return Array
+	 * @return Array | bool
 	 *
 	 * @throws Exception
 	 */
-	public function fetchRow(string $table, Array $condition, Array $columns = array()) : Array;
+	public function fetchRow(string $table, Array $condition, Array $columns = array()) : Array | bool;
 
 	/**
 	 * @description fetch all rows
@@ -163,4 +164,15 @@ interface DbInterface
      * @throws DbException
      */
     public function transation(callable $fun, $finally, ...$params) : bool;
+
+    /**
+     * @description exec sql
+     *
+     * @param string $sql
+     *
+     * @return int
+     *
+     * @throws DbException
+     */
+    public function exec(string $sql) : int;
 }

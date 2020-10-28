@@ -68,7 +68,7 @@ abstract class Base extends ShardingBase
 	 *
 	 * @throws DbException
 	 */
-	public function fetchRow(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1)
+	public function fetchRow(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1) : Array | bool
 	{
         return parent::fetchRow($condition, $columns, $db, $shardingKey);
 	}
@@ -88,7 +88,7 @@ abstract class Base extends ShardingBase
 	 *
 	 * @throws DbException
 	 */
-	public function fetchAll(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1)
+	public function fetchAll(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1) : Array
 	{
         return parent::fetchAll($condition, $columns, $db, $shardingKey);
 	}

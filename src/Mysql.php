@@ -48,13 +48,14 @@ class Mysql implements DbInterface
 		$dev = $config['dev'] ?? 'Off';
 		$this->isDev = $dev === 'On';
 
-		$this->adapter = Adapter::factory($config['adapter'] ?? 'Pdo', new Config(array(
+		$this->adapter = Adapter::factory($config['adapter'] ?? Adapter::DB_ADAPTER_PDO, new Config(array(
             'database' => $config['dbname'],
             'host' => $config['host'],
             'port' => $config['port'],
             'username' => $config['username'],
             'password' => $config['password'],
-            'charset' => $config['charset']
+            'charset' => $config['charset'],
+            'options' => $config['options'] ?? array()
         )));
 
         if (!$this->adapter instanceof AdapterInterface) {
@@ -97,10 +98,15 @@ class Mysql implements DbInterface
         if ($this->isDev) {
             $begin = microtime(true);
         }
-        $result = $this->adapter->query($sql);
-		if ($this->isDev) {
-			DbLogger::write($sql, microtime(true) - $begin);
-		}
+        try {
+            $result = $this->adapter->query($sql);
+        } catch (DbException $e) {
+            throw $e;
+        } finally {
+            if ($this->isDev) {
+                DbLogger::write($sql, microtime(true) - $begin);
+            }
+        }
 
 		return $result;
     }
@@ -146,11 +152,11 @@ class Mysql implements DbInterface
 	 *
 	 * @param Array $columns
 	 *
-	 * @return mixed
+	 * @return Array | bool
 	 *
 	 * @throws DbException
 	 */
-    public function fetchRow($table, Array $condition, Array $columns = array())
+    public function fetchRow(string $table, Array $condition, Array $columns = array()) : Array | bool
     {
         $select = new Select($table);
         $select->columns($columns);
@@ -189,7 +195,7 @@ class Mysql implements DbInterface
 	 *
 	 * @throws DbException
 	 */
-    public function fetchAll($table, Array $condition = array(), Array $columns = array()) : array
+    public function fetchAll(string $table, Array $condition = array(), Array $columns = array()) : array
     {
         $select = new Select($table);
         $select->columns($columns);
@@ -401,5 +407,29 @@ class Mysql implements DbInterface
         }
 
         return true;
+    }
+
+    /**
+     * @description exec sql
+     *
+     * @param string $sql
+     *
+     * @return int
+     */
+    public function exec(string $sql) : int
+    {
+        $begin = 0;
+        if ($this->isDev) {
+            $begin = microtime(true);
+        }
+        try {
+            return $this->adapter->exec($sql);
+        } catch (DbException $e) {
+            throw $e;
+        } finally {
+            if ($this->isDev) {
+                DbLogger::write($sql, microtime(true) - $begin);
+            }
+        }
     }
 }

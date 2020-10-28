@@ -20,28 +20,28 @@ class Insert implements SqlInterface
 	 *
 	 * @var string
 	 */
-    private $table;
+    private string $table;
 
 	/**
 	 * @description 插入的字段
 	 *
-	 * @var string
+	 * @var Array
 	 */
-    private $fields = array();
+    private Array $fields = array();
 
 	/**
 	 * @description 占位符
 	 *
-	 * @var string
+	 * @var Array
 	 */
-    private $values = array();
+    private Array $values = array();
 
 	/**
 	 * @description 插入的值
 	 *
-	 * @var string
+	 * @var Array
 	 */
-    private $data = array();
+    private Array $data = array();
 
 	/**
 	 * @description SQL语法格式
@@ -55,21 +55,21 @@ class Insert implements SqlInterface
 	 *
 	 * @var Array
 	 */
-    private $orignalData = array();
+    private Array $orignalData = array();
 
 	/**
 	 * @description 是否解析过的标志,防止多次解析，导致sql语法出错
 	 *
 	 * @var bool
 	 */
-	private $isParsed = false;
+	private bool $isParsed = false;
 
 	/**
 	 * @description 构造函数
 	 *
 	 * @param string $table
 	 */
-    public function __construct($table)
+    public function __construct(string $table)
     {
 		$info = explode('.', $table);
 		array_walk($info, function (&$row) {
@@ -86,7 +86,7 @@ class Insert implements SqlInterface
 	 *
 	 * @return string
 	 */
-	private function format($name)
+	private function format(string $name) : string
 	{
 		return sprintf('`%s`', $name);
 	}
@@ -100,7 +100,7 @@ class Insert implements SqlInterface
 	 *
 	 * @return null
 	 */
-    public function __set($name, $val)
+    public function __set(string $name, $val)
     {
         $this->orignalData[$name] = $val;
     }
@@ -112,7 +112,7 @@ class Insert implements SqlInterface
 	 *
 	 * @return mixed
 	 */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->orignalData[$name] ?? '';
     }
@@ -122,7 +122,7 @@ class Insert implements SqlInterface
 	 *
 	 * @return null
 	 */
-    public function parseData()
+    public function parseData() : void
     {
 		if ($this->isParsed) {
 			return;
@@ -141,7 +141,7 @@ class Insert implements SqlInterface
 	 *
 	 * @return Array
 	 */
-	public function getFields()
+	public function getFields() : Array
 	{
 		return $this->fields;
 	}
@@ -151,7 +151,7 @@ class Insert implements SqlInterface
 	 *
 	 * @return Array
 	 */
-	public function getValues()
+	public function getValues() : Array
 	{
 		return $this->values;
 	}
@@ -159,7 +159,7 @@ class Insert implements SqlInterface
 	/**
 	 * @description 准备SQL
 	 *
-	 * @return string | bool
+	 * @return string | null
 	 */
     public function getPrepareSql() : ? string
     {
@@ -202,4 +202,9 @@ class Insert implements SqlInterface
 
 		return $sql;
 	}
+
+    public function __toString() : string
+    {
+        return $this->toString();
+    }
 }

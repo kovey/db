@@ -34,14 +34,14 @@ class Select implements SqlInterface
 	 *
 	 * @var string
 	 */
-    private $table;
+    private string $table;
 
 	/**
 	 * @description 查询字段
 	 *
 	 * @var Array
 	 */
-    private $fields = array();
+    private Array $fields = array();
 
 	/**
 	 * @description SQL格式
@@ -90,63 +90,63 @@ class Select implements SqlInterface
 	 *
 	 * @var Where
 	 */
-    private $where;
+    private Where $where;
 
 	/**
 	 * @description OR Where条件
 	 *
 	 * @var Where
 	 */
-    private $orWhere;
+    private Where $orWhere;
 
 	/**
 	 * @description join数据
 	 *
 	 * @var Array
 	 */
-    private $joins = array();
+    private Array $joins = array();
 
 	/**
 	 * @description limit
 	 *
 	 * @var int
 	 */
-    private $limit = 0;
+    private int $limit = 0;
 
 	/**
 	 * @description offset
 	 *
 	 * @var int
 	 */
-    private $offset = 0;
+    private int $offset = -1;
 
 	/**
 	 * @description order
 	 *
 	 * @var string
 	 */
-    private $order;
+    private string $order;
 
 	/**
 	 * @description group
 	 *
 	 * @var string
 	 */
-    private $group;
+    private string $group;
 
     /**
      * @description HAVING
      *
      * @var string
      */
-    private $having;
+    private Having $having;
 
 	/**
 	 * @description 表别名
 	 *
 	 * @var string
 	 */
-    private $tableAs;
+    private string | bool $tableAs;
 
 	/**
 	 * @description 构造函数
@@ -155,7 +155,7 @@ class Select implements SqlInterface
 	 *
 	 * @param string | bool $as
 	 */
-    public function __construct($table, $as = false)
+    public function __construct(string $table, string | bool $as = false)
     {
         if (empty($as)) {
             $this->tableAs = false;
@@ -177,7 +177,7 @@ class Select implements SqlInterface
 	 *
 	 * @return string
 	 */
-	private function format($name)
+	private function format(string $name) : string
 	{
 		$info = explode('.', $name);
 		$len = count($info);
@@ -207,7 +207,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function columns(Array $columns, $tableName = false)
+    public function columns(Array $columns, string | bool $tableName = false) : Select
     {
         $finalTable = $this->table;
         if ($tableName === false || !is_string($tableName)) {
@@ -254,7 +254,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    private function join(Array $tableInfo, $on, Array $fileds, $type)
+    private function join(Array $tableInfo, string $on, Array $fileds, string $type) : Select
     {
 		$on = $this->formatOn($on);
 
@@ -288,7 +288,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function innerJoin(Array $tableInfo, $on, Array $fileds = array())
+    public function innerJoin(Array $tableInfo, string $on, Array $fileds = array()) : Select
     {
         return $this->join($tableInfo, $on, $fileds, self::INNER_JOIN_FORMAT);
     }
@@ -304,7 +304,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function leftJoin(Array $tableInfo, $on, Array $fileds = array())
+    public function leftJoin(Array $tableInfo, string $on, Array $fileds = array()) : Select
     {
         return $this->join($tableInfo, $on, $fileds, self::LEFT_JOIN_FORMAT);
     }
@@ -320,7 +320,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function rightJoin(Array $tableInfo, $on, Array $fileds = array())
+    public function rightJoin(Array $tableInfo, string $on, Array $fileds = array()) : Select
     {
         return $this->join($tableInfo, $on, $fileds, self::RIGHT_JOIN_FORMAT);
     }
@@ -332,7 +332,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function where($where)
+    public function where(Where | Array $where) : Select
 	{
 		if ($where instanceof Where) {
         	$this->where = $where;
@@ -366,7 +366,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function orWhere(Where $where)
+    public function orWhere(Where $where) : Select
     {
         $this->orWhere = $where;
         return $this;
@@ -375,11 +375,11 @@ class Select implements SqlInterface
 	/**
 	 * @description Having过滤条件
 	 *
-	 * @param Having | Array $having | string
+	 * @param Having | Array | string $having
 	 *
 	 * @return Select
 	 */
-    public function having($having)
+    public function having(Having | Array | string $having) : Select
 	{
 		if ($having instanceof Having) {
         	$this->having = $having;
@@ -411,7 +411,7 @@ class Select implements SqlInterface
 	 *
 	 * @return string
 	 */
-    private function processAsTable()
+    private function processAsTable() : string
     {
         if ($this->tableAs === false) {
             return $this->table;
@@ -477,7 +477,7 @@ class Select implements SqlInterface
      *
      * @return string
      */
-    private function getLimit() : string
+    private function getLimit() : ?string
     {
 		if ($this->limit < 1) {
             return null;
@@ -539,8 +539,12 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function limit($size)
+    public function limit(int $size) : Select
 	{
+        if ($size < 1) {
+            return $this;
+        }
+
         $this->limit = $size;
         return $this;
     }
@@ -552,8 +556,12 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function offset($offset)
+    public function offset(int $offset) : Select
 	{
+        if ($offset < 0) {
+            return $this;
+        }
+
         $this->offset = $offset;
         return $this;
     }
@@ -565,7 +573,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function order($order)
+    public function order(string $order) : Select
     {
 		if (!is_array($order)) {
 			$order = array($order);
@@ -588,7 +596,7 @@ class Select implements SqlInterface
 	 *
 	 * @return Select
 	 */
-    public function group($group)
+    public function group(string | Array $group) : Select
     {
         if (!is_array($group)) {
             $group = array($group);
@@ -609,7 +617,7 @@ class Select implements SqlInterface
 	 *
 	 * @return string
 	 */
-	private function formatOn($on)
+	private function formatOn(string $on) : string
 	{
 		$info = explode(' ', $on);
 		array_walk($info, function (&$row) {
@@ -664,4 +672,9 @@ class Select implements SqlInterface
 
 		return $sql;
 	}
+
+    public function __toString() : string
+    {
+        return $this->toString();
+    }
 }

@@ -118,9 +118,9 @@ class GlobalIdentify
 	/**
 	 * @description give
 	 *
-	 * @return bool
+	 * @return bool | int
 	 */
-	private function giveIdentifiesAgian() : bool
+	private function giveIdentifiesAgian() : bool | int
 	{
         if (!$this->lock()) {
             return false;

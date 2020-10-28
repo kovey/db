@@ -20,21 +20,21 @@ class Update implements SqlInterface
 	 *
 	 * @var string
 	 */
-    private $table;
+    private string $table;
 
 	/**
 	 * @description 更新的字段
 	 *
 	 * @var Array
 	 */
-    private $fields = array();
+    private Array $fields = array();
 
 	/**
 	 * @description 字段的值
 	 *
 	 * @var Array
 	 */
-    private $data = array();
+    private Array $data = array();
 
 	/**
 	 * @description 更新格式
@@ -48,49 +48,49 @@ class Update implements SqlInterface
 	 *
 	 * @var Where
 	 */
-    private $where;
+    private Where $where;
 
 	/**
 	 * @description 原始数据
 	 *
 	 * @var Array
 	 */
-    private $orignalData = array();
+    private Array $orignalData = array();
 
 	/**
 	 * @description 自增数据
 	 *
 	 * @var Array
 	 */
-    private $addData = array();
+    private Array $addData = array();
 
 	/**
 	 * @description 自减数据
 	 *
 	 * @var Array
 	 */
-    private $subData = array();
+    private Array $subData = array();
 
 	/**
 	 * @description 直更数据
 	 *
 	 * @var Array
 	 */
-    private $equalData = array();
+    private Array $equalData = array();
 
 	/**
 	 * @description 是否解析标志
 	 *
 	 * @var bool
 	 */
-	private $isParsed = false;
+	private bool $isParsed = false;
 
 	/**
 	 * @description 构造
 	 *
 	 * @var string $table
 	 */
-    public function __construct($table)
+    public function __construct(string $table)
     {
         $this->where = new Where();
 		$info = explode('.', $table);
@@ -108,7 +108,7 @@ class Update implements SqlInterface
 	 *
 	 * @return string
 	 */
-	private function format($name)
+	private function format(string $name) : string
 	{
 		return sprintf('`%s`', $name);
 	}
@@ -122,7 +122,7 @@ class Update implements SqlInterface
 	 *
 	 * @return null
 	 */
-    public function __set($name, $val)
+    public function __set(string $name, $val) : void
     {
         $this->orignalData[$name] = $val;
         $this->equalData[$name] = $val;
@@ -133,7 +133,7 @@ class Update implements SqlInterface
 	 *
 	 * @return Update
 	 */
-    protected function parseData()
+    protected function parseData() : Update
     {
 		if ($this->isParsed) {
 			return $this;
@@ -165,7 +165,7 @@ class Update implements SqlInterface
 	 *
 	 * @return string
 	 */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->orignalData[$name] ?? '';
     }
@@ -175,11 +175,11 @@ class Update implements SqlInterface
 	 *
 	 * @param string $name
 	 *
-	 * @param string $val
+	 * @param int $val
 	 *
 	 * @return Update
 	 */
-    public function addSelf($name, $val)
+    public function addSelf(string $name, int $val) : Update
     {
         $this->orignalData[$name] = $val;
         $this->addData[$name] = $val;
@@ -191,11 +191,11 @@ class Update implements SqlInterface
 	 *
 	 * @param string $name
 	 *
-	 * @param string $val
+	 * @param int $val
 	 *
 	 * @return Update
 	 */
-    public function subSelf($name, $val)
+    public function subSelf(string $name, int $val)
     {
         $this->orignalData[$name] = $val;
         $this->subData[$name] = $val;
@@ -209,7 +209,7 @@ class Update implements SqlInterface
 	 *
 	 * @return Update
 	 */
-    public function where(Array $condition)
+    public function where(Array $condition) : Update
     {
         foreach ($condition as $key => $val) {
             if (is_numeric($key)) {
@@ -284,4 +284,9 @@ class Update implements SqlInterface
 
 		return $sql;
 	}
+
+    public function __toString() : string
+    {
+        return $this->toString();
+    }
 }

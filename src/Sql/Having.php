@@ -25,14 +25,14 @@ class Having
 	 *
 	 * @var Array
 	 */
-    private $data;
+    private Array $data;
 
 	/**
 	 * @description 条件字段
 	 *
 	 * @var Array
 	 */
-    private $fields;
+    private Array $fields;
 
 	/**
 	 * @description 构造函数
@@ -50,7 +50,7 @@ class Having
 	 *
 	 * @return string
 	 */
-	private function format($name)
+	private function format(string $name) : string
 	{
 		$info = explode('.', $name);
 		$len = count($info);
@@ -68,11 +68,11 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param string | int $val
 	 *
-	 * @return null
+	 * @return void
 	 */
-    public function __set($name, $val)
+    public function __set(string $name, string | int $val) : void
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '=?';
@@ -83,14 +83,15 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function gt($name, $val)
+    public function gt(string $name, int | string $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '>?';
+        return $this;
     }
 
 	/**
@@ -98,14 +99,15 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function neq($name, $val)
+    public function neq(string $name, int | string $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '<>?';
+        return $this;
     }
 
 	/**
@@ -113,14 +115,15 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function ge($name, $val)
+    public function ge(string $name, int | string $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '>=?';
+        return $this;
     }
 
 	/**
@@ -128,14 +131,15 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string  $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function lt($name, $val)
+    public function lt(string $name, int | string $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '<?';
+        return $this;
     }
 
 	/**
@@ -143,14 +147,15 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function le($name, $val)
+    public function le(string $name, int | string $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '<=?';
+        return $this;
     }
 
 	/**
@@ -158,13 +163,14 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string  $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function eq($name, $val)
+    public function eq(string $name, int | string $val) : Having
     {
         $this->__set($name, $val);
+        return $this;
     }
 
 	/**
@@ -174,9 +180,9 @@ class Having
 	 *
 	 * @param Array $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function in($name, Array $val)
+    public function in(string $name, Array $val) : Having
     {
         $inVals = array();
         foreach ($val as $v) {
@@ -185,6 +191,7 @@ class Having
         }
 
         $this->fields[] = $this->format($name) . ' IN(' . implode(',', $inVals). ')';
+        return $this;
     }
 
 	/**
@@ -194,9 +201,9 @@ class Having
 	 *
 	 * @param Array $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function notIn($name, Array $val)
+    public function nin(string $name, Array $val) : Having
     {
         $inVals = array();
         foreach ($val as $v) {
@@ -205,6 +212,7 @@ class Having
         }
 
         $this->fields[] = $this->format($name) . ' NOT IN(' . implode(',', $inVals) . ')';
+        return $this;
     }
 
 	/**
@@ -212,14 +220,15 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param string $val
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function like($name, $val)
+    public function like(string $name, string $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' LIKE ?';
+        return $this;
     }
 
 	/**
@@ -227,17 +236,18 @@ class Having
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $start
+	 * @param int | string $start
 	 *
-	 * @param mixed $end
+	 * @param int | string  $end
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function between($name, $start, $end)
+    public function between(string $name, int | string $start, int | string $end) : Having
     {
         $this->data[] = $start;
         $this->data[] = $end;
         $this->fields[] = $this->format($name) . ' BETWEEN ? AND ?';
+        return $this;
     }
 
 	/**
@@ -245,11 +255,12 @@ class Having
 	 *
 	 * @param string $statement
 	 *
-	 * @return null
+	 * @return Having
 	 */
-    public function statement($statement)
+    public function statement(string $statement) : Having
     {
         $this->fields[] = $statement;
+        return $this;
     }
 
 	/**
@@ -281,11 +292,11 @@ class Having
 	 *
 	 * @return string
 	 */
-	public function toString() : string
+	public function toString() :string
 	{
 		$sql = $this->getPrepareHavingSql();
 		if (count($this->data) < 1) {
-			return $sql;
+			return empty($sql) ? '' : $sql;
 		}
 
 		foreach ($this->data as $needle) {
@@ -293,4 +304,9 @@ class Having
 		}
 		return $sql;
 	}
+
+    public function __toString() :string
+    {
+        return $this->toString();
+    }
 }

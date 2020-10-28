@@ -20,21 +20,21 @@ class Delete implements SqlInterface
 	 *
 	 * @var string
 	 */
-    private $table;
+    private string $table;
 
 	/**
 	 * @description 更新的字段
 	 *
 	 * @var Array
 	 */
-    private $fields = array();
+    private Array $fields = array();
 
 	/**
 	 * @description 字段的值
 	 *
 	 * @var Array
 	 */
-    private $data = array();
+    private Array $data = array();
 
 	/**
 	 * @description 更新格式
@@ -48,14 +48,14 @@ class Delete implements SqlInterface
 	 *
 	 * @var Where
 	 */
-    private $where;
+    private Where $where;
 
 	/**
 	 * @description 构造
 	 *
 	 * @var string $table
 	 */
-    public function __construct($table)
+    public function __construct(string $table)
     {
         $this->where = new Where();
 		$info = explode('.', $table);
@@ -73,7 +73,7 @@ class Delete implements SqlInterface
 	 *
 	 * @return string
 	 */
-	private function format($name)
+	private function format(string $name) : string
 	{
 		return sprintf('`%s`', $name);
 	}
@@ -85,7 +85,7 @@ class Delete implements SqlInterface
 	 *
 	 * @return Update
 	 */
-    public function where(Array $condition)
+    public function where(Array $condition) : Delete
     {
         foreach ($condition as $key => $val) {
             if (is_numeric($key)) {
@@ -149,4 +149,9 @@ class Delete implements SqlInterface
 
 		return $sql;
 	}
+
+    public function __toString() : string
+    {
+        return $this->toString();
+    }
 }

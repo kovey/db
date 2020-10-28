@@ -20,28 +20,28 @@ class BatchInsert implements SqlInterface
 	 *
 	 * @var string
 	 */
-    private $table;
+    private string $table;
 
 	/**
 	 * @description 插入的字段名称
 	 *
 	 * @var Array
 	 */
-    private $fields = array();
+    private Array $fields = array();
 
 	/**
 	 * @description 插入的值
 	 *
 	 * @var Array
 	 */
-    private $values = array();
+    private Array $values = array();
 
 	/**
 	 * @description 最终合并的数据
 	 *
 	 * @var Array
 	 */
-    private $data = array();
+    private Array $data = array();
 
 	/**
 	 * @description SQL语法
@@ -55,7 +55,7 @@ class BatchInsert implements SqlInterface
 	 *
 	 * @var string $table
 	 */
-    public function __construct($table)
+    public function __construct(string $table)
     {
 		$info = explode('.', $table);
 		array_walk($info, function (&$row) {
@@ -92,7 +92,7 @@ class BatchInsert implements SqlInterface
 	 *
 	 * @return string
 	 */
-	private function format($name)
+	private function format(string $name) : string
 	{
 		return sprintf('`%s`', $name);
 	}
@@ -141,4 +141,9 @@ class BatchInsert implements SqlInterface
 
 		return $sql;
 	}
+
+    public function __toString() : string
+    {
+        return $this->toString();
+    }
 }

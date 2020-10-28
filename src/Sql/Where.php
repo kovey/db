@@ -25,14 +25,14 @@ class Where
 	 *
 	 * @var Array
 	 */
-    private $data;
+    private Array $data;
 
 	/**
 	 * @description 条件字段
 	 *
 	 * @var Array
 	 */
-    private $fields;
+    private Array $fields;
 
 	/**
 	 * @description 构造函数
@@ -50,7 +50,7 @@ class Where
 	 *
 	 * @return string
 	 */
-	private function format($name)
+	private function format(string $name) : string
 	{
 		$info = explode('.', $name);
 		$len = count($info);
@@ -72,7 +72,7 @@ class Where
 	 *
 	 * @return null
 	 */
-    public function __set($name, $val)
+    public function __set(string $name, $val) : void
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' = ?';
@@ -83,14 +83,15 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
 	 * @return null
 	 */
-    public function gt($name, $val)
+    public function gt(string $name, int | string $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' > ?';
+        return $this;
     }
 
 	/**
@@ -98,14 +99,15 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
 	 * @return null
 	 */
-    public function neq($name, $val)
+    public function neq(string $name, int | string $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' <> ?';
+        return $this;
     }
 
 	/**
@@ -113,14 +115,15 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
 	 * @return null
 	 */
-    public function ge($name, $val)
+    public function ge(string $name, int | string $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' >= ?';
+        return $this;
     }
 
 	/**
@@ -128,14 +131,15 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param string | int $val
 	 *
 	 * @return null
 	 */
-    public function lt($name, $val)
+    public function lt(string $name, int | string $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' < ?';
+        return $this;
     }
 
 	/**
@@ -143,14 +147,15 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param int | string $val
 	 *
 	 * @return null
 	 */
-    public function le($name, $val)
+    public function le(string $name, int | string $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' <= ?';
+        return $this;
     }
 
 	/**
@@ -158,13 +163,14 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param string | int $val
 	 *
 	 * @return null
 	 */
-    public function eq($name, $val)
+    public function eq(string $name, string | int $val) : Where
     {
         $this->__set($name, $val);
+        return $this;
     }
 
 	/**
@@ -176,7 +182,7 @@ class Where
 	 *
 	 * @return null
 	 */
-    public function in($name, Array $val)
+    public function in(string $name, Array $val) : Where
     {
         $inVals = array();
         foreach ($val as $v) {
@@ -185,6 +191,7 @@ class Where
         }
 
         $this->fields[] = $this->format($name) . ' IN (' . implode(',', $inVals). ')';
+        return $this;
     }
 
 	/**
@@ -196,7 +203,7 @@ class Where
 	 *
 	 * @return null
 	 */
-    public function nin($name, Array $val)
+    public function nin(string $name, Array $val) : Where
     {
         $inVals = array();
         foreach ($val as $v) {
@@ -205,6 +212,7 @@ class Where
         }
 
         $this->fields[] = $this->format($name) . ' NOT IN (' . implode(',', $inVals) . ')';
+        return $this;
     }
 
 	/**
@@ -212,14 +220,15 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $val
+	 * @param string $val
 	 *
 	 * @return null
 	 */
-    public function like($name, $val)
+    public function like(string $name, string $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' LIKE ?';
+        return $this;
     }
 
 	/**
@@ -227,17 +236,18 @@ class Where
 	 *
 	 * @param string $name
 	 *
-	 * @param mixed $start
+	 * @param int | string $start
 	 *
-	 * @param mixed $end
+	 * @param int | string $end
 	 *
-	 * @return null
+	 * @return Where
 	 */
-    public function between($name, $start, $end)
+    public function between(string $name, int | string $start, int | string $end) : Where
     {
         $this->data[] = $start;
         $this->data[] = $end;
         $this->fields[] = $this->format($name) . ' BETWEEN ? AND ?';
+        return $this;
     }
 
 	/**
@@ -247,9 +257,10 @@ class Where
 	 *
 	 * @return null
 	 */
-    public function statement($statement)
+    public function statement(string $statement) : Where
     {
         $this->fields[] = $statement;
+        return $this;
     }
 
 	/**
@@ -307,4 +318,9 @@ class Where
 		}
 		return $sql;
 	}
+
+    public function __toString() : string
+    {
+        return $this->toString();
+    }
 }
