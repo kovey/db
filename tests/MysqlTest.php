@@ -225,6 +225,18 @@ class MysqlTest extends TestCase
         $this->assertEquals(array(array('id' => 1, 'name' => 'kovey framework')), $this->mysql->fetchAll('test', array('id' => 1), array('id', 'name')));
     }
 
+    public function testInTransaction()
+    {
+        $this->mysql->beginTransaction();
+        $this->assertTrue($this->mysql->inTransaction());
+        $this->mysql->rollBack();
+        $this->assertFalse($this->mysql->inTransaction());
+        $this->mysql->beginTransaction();
+        $this->assertTrue($this->mysql->inTransaction());
+        $this->mysql->commit();
+        $this->assertFalse($this->mysql->inTransaction());
+    }
+
     protected function tearDown() : void
     {
         $this->mysql->exec('drop table test');

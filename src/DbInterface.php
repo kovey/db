@@ -177,4 +177,11 @@ interface DbInterface
      * @throws DbException
      */
     public function exec(string $sql) : int;
+
+    /**
+     * @description is in transation
+     *
+     * @return bool
+     */
+    public function inTransaction() : bool;
 }

@@ -432,4 +432,14 @@ class Mysql implements DbInterface
             }
         }
     }
+    
+    /**
+     * @description is in transation
+     *
+     * @return bool
+     */
+    public function inTransaction() : bool
+    {
+        return $this->adapter->inTransaction();
+    }
 }
