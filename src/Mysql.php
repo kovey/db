@@ -92,7 +92,7 @@ class Mysql implements DbInterface
 	 *
 	 * @throws DbException"
 	 */
-    public function query($sql)
+    public function query(string $sql) : Array
     {
         $begin = 0;
         if ($this->isDev) {

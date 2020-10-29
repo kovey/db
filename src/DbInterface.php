@@ -43,9 +43,11 @@ interface DbInterface
 	/**
 	 * @description query
 	 *
+     * @param string $sql
+     *
 	 * @return mixed
 	 */
-	public function query($sql);
+	public function query(string $sql) : Array;
 
 	/**
 	 * @description commit transation

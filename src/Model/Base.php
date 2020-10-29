@@ -1,13 +1,11 @@
 <?php
 /**
  *
- * @description 对应表
+ * @description modal base
  *
- * @package    Kovey\Components\Db\Model 
+ * @package    Kovey\Db\Model 
  *
  * @time        2020-01-19 17:55:12
- *
- * @file  /Users/kovey/Documents/php/kovey/Kovey/Components/Db/Model/Base.php
  *
  * @author      kovey
  */
@@ -16,9 +14,21 @@ namespace Kovey\Db\Model;
 use Kovey\Db\DbInterface;
 use Kovey\Db\Sql\Select;
 use Kovey\Db\Sql\Where;
+use Kovey\Db\Sql\Insert;
+use Kovey\Db\Sql\Update;
+use Kovey\Db\Sql\Delete;
+use Kovey\Db\Sql\BatchInsert;
+use Kovey\Db\Exception\DbException;
 
-abstract class Base extends ShardingBase
+abstract class Base
 {
+	/**
+	 * @description table name
+	 *
+	 * @var string
+	 */
+	protected string $tableName;
+
 	/**
 	 * @description insert data
 	 *
@@ -26,13 +36,16 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
 	 *
-	 * @return string | int $shardingKey
-	 *
 	 * @throws DbException
 	 */
-	public function insert(Array $data, DbInterface $db, string | int $shardingKey = -1) : int
+	public function insert(Array $data, DbInterface $db) : int
 	{
-        return parent::insert($data, $db, $shardingKey);
+		$insert = new Insert($this->tableName);
+		foreach ($data as $key => $val) {
+			$insert->$key = $val;
+		}
+
+		return $db->insert($insert);
 	}
 
 	/**
@@ -44,13 +57,17 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
 	 *
-	 * @param string | int $shardingKey
-	 *
 	 * @throws DbException
 	 */
-	public function update(Array $data, Array $condition, DbInterface $db, string | int $shardingKey = -1) : int
+	public function update(Array $data, Array $condition, DbInterface $db) : int
 	{
-        return parent::update($data, $condition, $db, $shardingKey);
+		$update = new Update($this->tableName);
+		foreach ($data as $key => $val) {
+			$update->$key = $val;
+		}
+
+		$update->where($condition);
+		return $db->update($update);
 	}
 
 	/**
@@ -62,15 +79,17 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-	 * @param string | int $shardingKey
-	 *
 	 * @return Array
 	 *
 	 * @throws DbException
 	 */
-	public function fetchRow(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1) : Array | bool
+	public function fetchRow(Array $condition, Array $columns, DbInterface $db) : Array | bool
 	{
-        return parent::fetchRow($condition, $columns, $db, $shardingKey);
+		if (empty($columns)) {
+			throw new DbException('selected columns is empty.', 1004); 
+		}
+
+		return $db->fetchRow($this->tableName, $condition, $columns);
 	}
 
 	/**
@@ -82,15 +101,17 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-	 * @param string | int $shardingKey
-	 *
 	 * @return Array
 	 *
 	 * @throws DbException
 	 */
-	public function fetchAll(Array $condition, Array $columns, DbInterface $db, string | int $shardingKey = -1) : Array
+	public function fetchAll(Array $condition, Array $columns, DbInterface $db) : Array
 	{
-        return parent::fetchAll($condition, $columns, $db, $shardingKey);
+		if (empty($columns)) {
+			throw new DbException('selected columns is empty.', 1005); 
+		}
+
+		return $db->fetchAll($this->tableName, $condition, $columns);
 	}
 
 	/**
@@ -100,15 +121,27 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-	 * @param string | int $shardingKey
-	 *
 	 * @return int
 	 *
 	 * @throws DbException
 	 */
-	public function batchInsert(Array $rows, DbInterface $db, string | int $shardingKey = -1) : int
+	public function batchInsert(Array $rows, DbInterface $db) : int
 	{
-        return parent::batchInsert($rows, $db, $shardingKey);
+		if (empty($rows)) {
+			throw new DbException('rows is empty.', 1006);
+		}
+
+		$batchInsert = new BatchInsert($this->tableName);
+		foreach ($rows as $row) {
+			$insert = new Insert($this->tableName);
+			foreach ($row as $key => $val) {
+				$insert->$key = $val;
+			}
+
+			$batchInsert->add($insert);
+		}
+
+		return $db->batchInsert($batchInsert);
 	}
 
 	/**
@@ -120,15 +153,15 @@ abstract class Base extends ShardingBase
 	 *
 	 * @param DbInterface $db
      *
-	 * @param string | int $shardingKey
-	 *
 	 * @return int
 	 *
 	 * @throws DbException
 	 */
-	public function delete(Array $condition, DbInterface $db, string | int $shardingKey = -1) : int
+	public function delete(Array $condition, DbInterface $db) : int
 	{
-        return parent::delete($condition, $db, $shardingKey);
+		$delete = new Delete($this->tableName);
+		$delete->where($condition);
+		return $db->delete($delete);
 	}
 
 	/**
@@ -159,8 +192,8 @@ abstract class Base extends ShardingBase
     public function fetchByPage(Array $condition, Array $columns, int $page, int $pageSize, DbInterface $db, string $tableAs = '', string $order = '', string $group = '', Array $join = array())
     {
         $offset = intval(($page - 1) * $pageSize);
-        $select = new Select($this->getTableName(), $tableAs);
-        $totalSelect = new Select($this->getTableName(), $tableAs);
+        $select = new Select($this->tableName, $tableAs);
+        $totalSelect = new Select($this->tableName, $tableAs);
         $select->columns($columns)
                ->limit($pageSize)
                ->offset($offset);
