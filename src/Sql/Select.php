@@ -118,7 +118,7 @@ class Select implements SqlInterface
 	 *
 	 * @var int
 	 */
-    private int $offset = -1;
+    private int $offset = 0;
 
 	/**
 	 * @description order
