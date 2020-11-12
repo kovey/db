@@ -56,7 +56,7 @@ class Pdo implements AdapterInterface
                 $this->config->getUser(), $this->config->getPassword(), $this->config->getOptions()
             );
         } catch (\PDOException $e) {
-            $this->error = $e->getMessage();
+            $this->parseError($e);
             return false;
         }
 
@@ -70,14 +70,7 @@ class Pdo implements AdapterInterface
 	 */
 	public function getError() : string
 	{
-        if (empty($this->connection)) {
-            return $this->error;
-        }
-
-        return sprintf(
-            'error code: %s, error msg: %s',
-            $this->connection->errorCode(), implode(',', $this->connection->errorInfo())
-        );
+        return $this->error;
 	}
 
     /**
@@ -93,12 +86,14 @@ class Pdo implements AdapterInterface
             $result = $this->connection->query($sql);
             return $result->fetchAll();
         } catch (\PDOException $e) {
+            $this->parseError($e);
             if ($this->isDisconneted()) {
                 try {
                     $this->connect();
                     $result = $this->connection->query($sql);
                     return $result->fetchAll();
                 } catch (\PDOException $e) {
+                    $this->parseError($e);
                     throw new DbException($e->getMessage(), $e->getCode());
                 }
             }
@@ -117,6 +112,7 @@ class Pdo implements AdapterInterface
         try {
             return $this->connection->commit();
         } catch (\PDOException $e) {
+            $this->parseError($e);
             throw new DbException($e->getMessage(), $e->getCode());
         }
     }
@@ -131,11 +127,13 @@ class Pdo implements AdapterInterface
         try {
             return $this->connection->beginTransaction();
         } catch (\PDOException $e) {
+            $this->parseError($e);
             if ($this->isDisconneted()) {
                 try {
                     $this->connect();
                     return $this->connection->beginTransaction();
                 } catch (\PDOException $e) {
+                    $this->parseError($e);
                     throw new DbException($e->getMessage(), $e->getCode());
                 }
             } 
@@ -154,6 +152,7 @@ class Pdo implements AdapterInterface
         try {
             return $this->connection->rollBack();
         } catch (\PDOException $e) {
+            $this->parseError($e);
             return false;
         }
     }
@@ -170,6 +169,7 @@ class Pdo implements AdapterInterface
         try {
             return $this->connection->prepare($sql);
         } catch (\PDOException $e) {
+            $this->parseError($e);
             if ($this->connection->inTransaction()) {
                 throw new DbException($e->getMessage(), $e->getCode());
             }
@@ -179,6 +179,7 @@ class Pdo implements AdapterInterface
                     $this->connect();
                     return $this->connection->prepare($sql);
                 } catch (\PDOException $e) {
+                    $this->parseError($e);
                     throw new DbException($e->getMessage(), $e->getCode());
                 }
             } 
@@ -283,6 +284,7 @@ class Pdo implements AdapterInterface
         try {
             return $this->connection->exec($sql);
         } catch (\PDOException $e) {
+            $this->parseError($e);
             if ($this->connection->inTransaction()) {
                 throw new DbException($e->getMessage(), $e->getCode());
             }
@@ -292,11 +294,24 @@ class Pdo implements AdapterInterface
                     $this->connect();
                     return $this->connection->exec($sql);
                 } catch (\PDOException $e) {
+                    $this->parseError($e);
                     throw new DbException($e->getMessage(), $e->getCode());
                 }
             }
 
             throw new DbException($e->getMessage(), $e->getCode());
         }
+    }
+
+    /**
+     * @description parse error
+     *
+     * @param PDOException $e
+     *
+     * @return null
+     */
+    private function parseError(\PDOException $e) : void
+    {
+        $this->error = $e->getCode() . ' ' . $e->getMessage();
     }
 }

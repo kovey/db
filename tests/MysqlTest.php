@@ -66,7 +66,7 @@ class MysqlTest extends TestCase
             'options' => array()
         ));
         $this->assertFalse($mysql->connect());
-        $this->assertEquals('SQLSTATE[HY000] [2019] Unknown character set', $mysql->getError());
+        $this->assertEquals('2019 SQLSTATE[HY000] [2019] Unknown character set', $mysql->getError());
     }
 
     public function testQuery()

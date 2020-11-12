@@ -68,7 +68,7 @@ class PdoTest extends TestCase
 
         $result = $pdo->connect();
         $this->assertFalse($result);
-        $this->assertEquals('SQLSTATE[HY000] [2019] Unknown character set', $pdo->getError());
+        $this->assertEquals('2019 SQLSTATE[HY000] [2019] Unknown character set', $pdo->getError());
     }
 
     public function testExecSuccess()
