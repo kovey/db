@@ -291,6 +291,22 @@ class Mysql implements DbInterface
             }
             return $sth;
         } catch (\PDOException $e) {
+            $this->adapter->parseError($e);
+            if ($this->adapter->inTransaction()) {
+                throw new DbException($e->getMessage(), $e->getCode());
+            }
+            if ($this->adapter->isDisconneted()) {
+                if (!$this->adapter->connect()) {
+                    throw new DbException($this->adapter->getError(), 1013);
+                }
+                try {
+                    $sth = $this->adapter->prepare($sql);
+                    $sth->execute($sqlObj->getBindData());
+                    return $sth;
+                } catch (\PDOException $e) {
+                    throw new DbException($e->getMessage(), $e->getCode());
+                }
+            }
             throw new DbException($e->getMessage(), $e->getCode());
         } catch (DbException $e) {
             throw $e;

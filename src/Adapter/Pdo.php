@@ -310,7 +310,7 @@ class Pdo implements AdapterInterface
      *
      * @return null
      */
-    private function parseError(\PDOException $e) : void
+    public function parseError(\PDOException $e) : void
     {
         $this->error = $e->getCode() . ' ' . $e->getMessage();
     }
