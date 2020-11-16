@@ -182,7 +182,7 @@ class MysqlTest extends TestCase
 
     public function testTransactionFun()
     {
-        $this->assertTrue($this->mysql->transation(function ($db, $param) {
+        $this->assertTrue($this->mysql->transaction(function ($db, $param) {
             $insert = new Insert('test');
             $insert->name = 'kovey framework';
             $db->insert($insert);
@@ -192,8 +192,8 @@ class MysqlTest extends TestCase
         }, function ($db, $param) {
             $this->assertInstanceOf(DbInterface::class, $db);
             $this->assertInstanceOf(Mysql::class, $db);
-            $this->assertEquals('transation test', $param);
-        }, 'transation test'));
+            $this->assertEquals('transaction test', $param);
+        }, 'transaction test'));
 
         $this->assertEquals(array(
             array(
