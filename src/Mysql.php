@@ -404,7 +404,7 @@ class Mysql implements DbInterface
      *
      * @throws DbException
      */
-    public function transation(callable $fun, $finally, ...$params) : bool
+    public function transaction(callable $fun, $finally, ...$params) : bool
     {
         if (!$this->beginTransaction()) {
             return false;
