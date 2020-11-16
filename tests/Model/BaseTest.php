@@ -39,69 +39,75 @@ class BaseTest extends TestCase
     public function testInsert()
     {
         $table = new Table();
+        $table->database = $this->mysql;
         $this->assertEquals(1, $table->insert(array(
             'number' => 1
-        ), $this->mysql));
+        )));
 
-        $this->assertEquals(array('id' => 1, 'number' => 1), $table->fetchRow(array('id' => 1), array('id', 'number'), $this->mysql));
+        $this->assertEquals(array('id' => 1, 'number' => 1), $table->fetchRow(array('id' => 1), array('id', 'number')));
     }
 
     public function testUpdate()
     {
         $table = new Table();
+        $table->database = $this->mysql;
         $table->insert(array(
             'number' => 1
         ), $this->mysql);
 
         $this->assertEquals(1, $table->update(array(
             'number' => 3
-        ), array('id' => 1), $this->mysql));
+        ), array('id' => 1)));
 
-        $this->assertEquals(array('id' => 1, 'number' => 3), $table->fetchRow(array('id' => 1), array('id', 'number'), $this->mysql));
+        $this->assertEquals(array('id' => 1, 'number' => 3), $table->fetchRow(array('id' => 1), array('id', 'number')));
     }
 
     public function testDelete()
     {
         $table = new Table();
+        $table->database = $this->mysql;
         $this->assertEquals(1, $table->insert(array(
             'number' => 1
-        ), $this->mysql));
+        )));
 
-        $this->assertEquals(array('id' => 1, 'number' => 1), $table->fetchRow(array('id' => 1), array('id', 'number'), $this->mysql));
+        $this->assertEquals(array('id' => 1, 'number' => 1), $table->fetchRow(array('id' => 1), array('id', 'number')));
 
-        $this->assertEquals(1, $table->delete(array('id' => 1), $this->mysql));
-        $this->assertFalse($table->fetchRow(array('id' => 1), array('id', 'number'), $this->mysql));
+        $this->assertEquals(1, $table->delete(array('id' => 1)));
+        $this->assertFalse($table->fetchRow(array('id' => 1), array('id', 'number')));
     }
 
     public function testFetchRow()
     {
         $table = new Table();
+        $table->database = $this->mysql;
         $table->insert(array(
             'number' => 1
-        ), $this->mysql);
+        ));
 
-        $this->assertEquals(array('id' => 1, 'number' => 1), $table->fetchRow(array('id' => 1), array('id', 'number'), $this->mysql));
+        $this->assertEquals(array('id' => 1, 'number' => 1), $table->fetchRow(array('id' => 1), array('id', 'number')));
     }
 
     public function testFetchAll()
     {
         $table = new Table();
+        $table->database = $this->mysql;
         $table->insert(array(
             'number' => 1
-        ), $this->mysql);
+        ));
         $table->insert(array(
             'number' => 2
-        ), $this->mysql);
+        ));
 
         $this->assertEquals(array(
             array('id' => 1, 'number' => 1),
             array('id' => 2, 'number' => 2),
-        ), $table->fetchAll(array(), array('id', 'number'), $this->mysql));
+        ), $table->fetchAll(array(), array('id', 'number')));
     }
 
     public function testBatchInsert()
     {
         $table = new Table();
+        $table->database = $this->mysql;
         $this->assertEquals(2, $table->batchInsert(array(
             array(
                 'number' => 1
@@ -109,11 +115,11 @@ class BaseTest extends TestCase
             array(
                 'number' => 2
             )
-        ), $this->mysql));
+        )));
         $this->assertEquals(array(
             array('id' => 1, 'number' => 1),
             array('id' => 2, 'number' => 2),
-        ), $table->fetchAll(array(), array('id', 'number'), $this->mysql));
+        ), $table->fetchAll(array(), array('id', 'number')));
     }
 
     protected function tearDown() : void

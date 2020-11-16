@@ -11,7 +11,6 @@
  */
 namespace Kovey\Db\Model;
 
-use Kovey\Db\DbInterface;
 use Kovey\Db\Sql\Select;
 use Kovey\Db\Sql\Where;
 use Kovey\Db\Sql\Insert;
@@ -34,18 +33,16 @@ abstract class Base
 	 *
 	 * @param Array $data
 	 *
-	 * @param DbInterface $db
-	 *
 	 * @throws DbException
 	 */
-	public function insert(Array $data, DbInterface $db) : int
+	public function insert(Array $data) : int
 	{
 		$insert = new Insert($this->tableName);
 		foreach ($data as $key => $val) {
 			$insert->$key = $val;
 		}
 
-		return $db->insert($insert);
+		return $this->database->insert($insert);
 	}
 
 	/**
@@ -55,11 +52,9 @@ abstract class Base
 	 *
 	 * @param Array $condition
 	 *
-	 * @param DbInterface $db
-	 *
 	 * @throws DbException
 	 */
-	public function update(Array $data, Array $condition, DbInterface $db) : int
+	public function update(Array $data, Array $condition) : int
 	{
 		$update = new Update($this->tableName);
 		foreach ($data as $key => $val) {
@@ -67,7 +62,7 @@ abstract class Base
 		}
 
 		$update->where($condition);
-		return $db->update($update);
+		return $this->database->update($update);
 	}
 
 	/**
@@ -77,19 +72,17 @@ abstract class Base
 	 *
 	 * @param Array $columns
 	 *
-	 * @param DbInterface $db
-     *
 	 * @return Array
 	 *
 	 * @throws DbException
 	 */
-	public function fetchRow(Array $condition, Array $columns, DbInterface $db) : Array | bool
+	public function fetchRow(Array $condition, Array $columns) : Array | bool
 	{
 		if (empty($columns)) {
 			throw new DbException('selected columns is empty.', 1004); 
 		}
 
-		return $db->fetchRow($this->tableName, $condition, $columns);
+		return $this->database->fetchRow($this->tableName, $condition, $columns);
 	}
 
 	/**
@@ -99,19 +92,17 @@ abstract class Base
 	 *
 	 * @param Array  $columns
 	 *
-	 * @param DbInterface $db
-     *
 	 * @return Array
 	 *
 	 * @throws DbException
 	 */
-	public function fetchAll(Array $condition, Array $columns, DbInterface $db) : Array
+	public function fetchAll(Array $condition, Array $columns) : Array
 	{
 		if (empty($columns)) {
 			throw new DbException('selected columns is empty.', 1005); 
 		}
 
-		return $db->fetchAll($this->tableName, $condition, $columns);
+		return $this->database->fetchAll($this->tableName, $condition, $columns);
 	}
 
 	/**
@@ -119,13 +110,11 @@ abstract class Base
 	 *
 	 * @param Array $rows
 	 *
-	 * @param DbInterface $db
-     *
 	 * @return int
 	 *
 	 * @throws DbException
 	 */
-	public function batchInsert(Array $rows, DbInterface $db) : int
+	public function batchInsert(Array $rows) : int
 	{
 		if (empty($rows)) {
 			throw new DbException('rows is empty.', 1006);
@@ -141,7 +130,7 @@ abstract class Base
 			$batchInsert->add($insert);
 		}
 
-		return $db->batchInsert($batchInsert);
+		return $this->database->batchInsert($batchInsert);
 	}
 
 	/**
@@ -151,17 +140,15 @@ abstract class Base
 	 *
 	 * @param Array $condition
 	 *
-	 * @param DbInterface $db
-     *
 	 * @return int
 	 *
 	 * @throws DbException
 	 */
-	public function delete(Array $condition, DbInterface $db) : int
+	public function delete(Array $condition) : int
 	{
 		$delete = new Delete($this->tableName);
 		$delete->where($condition);
-		return $db->delete($delete);
+		return $this->database->delete($delete);
 	}
 
 	/**
@@ -189,7 +176,7 @@ abstract class Base
 	 *
 	 * @throws DbException
 	 */
-    public function fetchByPage(Array $condition, Array $columns, int $page, int $pageSize, DbInterface $db, string $tableAs = '', string $order = '', string $group = '', Array $join = array())
+    public function fetchByPage(Array $condition, Array $columns, int $page, int $pageSize, string $tableAs = '', string $order = '', string $group = '', Array $join = array())
     {
         $offset = intval(($page - 1) * $pageSize);
         $select = new Select($this->tableName, $tableAs);
@@ -236,8 +223,8 @@ abstract class Base
             }
         }
 
-        $rows = $db->select($select);
-        $total = $db->select($totalSelect, Select::SINGLE);
+        $rows = $this->database->select($select);
+        $total = $this->database->select($totalSelect, Select::SINGLE);
         $totalCount = intval($total['count']);
         return array(
             'totalCount' => $totalCount,
