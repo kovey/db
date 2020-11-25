@@ -69,7 +69,8 @@ class Config
         $this->options = array(
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
             \PDO::ATTR_CASE => \PDO::CASE_LOWER,
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_STRINGIFY_FETCHES => false
         );
 
         foreach ($config as $field => $val) {
