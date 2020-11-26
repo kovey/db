@@ -19,115 +19,115 @@ use Kovey\Db\Sql\BatchInsert;
 
 interface DbInterface
 {
-	/**
-	 * @description construct
-	 *
-	 * @param Array $config
-	 */
-	public function __construct(Array $config);
+    /**
+     * @description construct
+     *
+     * @param Array $config
+     */
+    public function __construct(Array $config);
 
-	/**
-	 * @description connect to server
-	 *
-	 * @return bool
-	 */
-	public function connect() : bool;
+    /**
+     * @description connect to server
+     *
+     * @return bool
+     */
+    public function connect() : bool;
 
-	/**
-	 * @description get error
-	 *
-	 * @return string
-	 */
-	public function getError() : string;
+    /**
+     * @description get error
+     *
+     * @return string
+     */
+    public function getError() : string;
 
-	/**
-	 * @description query
-	 *
+    /**
+     * @description query
+     *
      * @param string $sql
      *
-	 * @return mixed
-	 */
-	public function query(string $sql) : Array;
+     * @return mixed
+     */
+    public function query(string $sql) : Array;
 
-	/**
-	 * @description commit transation
-	 *
-	 * @return bool
-	 */
-	public function commit() : bool;
+    /**
+     * @description commit transation
+     *
+     * @return bool
+     */
+    public function commit() : bool;
 
-	/**
-	 * @description open transation
-	 *
-	 * @return bool
-	 */
-	public function beginTransaction() : bool;
+    /**
+     * @description open transation
+     *
+     * @return bool
+     */
+    public function beginTransaction() : bool;
 
-	/**
-	 * @description cancel transation
-	 *
-	 * @return bool
-	 */
-	public function rollBack() : bool;
+    /**
+     * @description cancel transation
+     *
+     * @return bool
+     */
+    public function rollBack() : bool;
 
-	/**
-	 * @description fetch row
-	 *
-	 * @param string $table
-	 *
-	 * @param Array $condition
-	 *
-	 * @param Array $columns
-	 *
-	 * @return Array | bool
-	 *
-	 * @throws Exception
-	 */
-	public function fetchRow(string $table, Array $condition, Array $columns = array()) : Array | bool;
+    /**
+     * @description fetch row
+     *
+     * @param string $table
+     *
+     * @param Array $condition
+     *
+     * @param Array $columns
+     *
+     * @return Array | bool
+     *
+     * @throws Exception
+     */
+    public function fetchRow(string $table, Array $condition, Array $columns = array()) : Array | bool;
 
-	/**
-	 * @description fetch all rows
-	 *
-	 * @param string $table
-	 *
-	 * @param Array $condition
-	 *
-	 * @param Array $columns
-	 *
-	 * @return Array
-	 *
-	 * @throws Exception
-	 */
-	public function fetchAll(string $table, Array $condition = array(), Array $columns = array()) : array;
+    /**
+     * @description fetch all rows
+     *
+     * @param string $table
+     *
+     * @param Array $condition
+     *
+     * @param Array $columns
+     *
+     * @return Array
+     *
+     * @throws Exception
+     */
+    public function fetchAll(string $table, Array $condition = array(), Array $columns = array()) : array;
 
-	/**
-	 * @description execute update sql
-	 *
-	 * @param Update $update
-	 *
-	 * @return int
-	 */
-	public function update(Update $update) : int;
+    /**
+     * @description execute update sql
+     *
+     * @param Update $update
+     *
+     * @return int
+     */
+    public function update(Update $update) : int;
 
-	/**
-	 * @description execute insert sql
-	 *
-	 * @param Insert $insert
-	 *
-	 * @return int
-	 */
-	public function insert(Insert $insert) : int;
+    /**
+     * @description execute insert sql
+     *
+     * @param Insert $insert
+     *
+     * @return int
+     */
+    public function insert(Insert $insert) : int;
 
-	/**
-	 * @description execute select sql
-	 *
-	 * @param Select $select
-	 *
-	 * @param int $type
-	 *
-	 * @return Array | bool
-	 */
-	public function select(Select $select, int $type = Select::ALL);
+    /**
+     * @description execute select sql
+     *
+     * @param Select $select
+     *
+     * @param int $type
+     *
+     * @return Array | bool
+     */
+    public function select(Select $select, int $type = Select::ALL);
 
     /**
      * @description batch insert
@@ -141,15 +141,15 @@ interface DbInterface
      */
     public function batchInsert(BatchInsert $batchInsert) : int;
 
-	/**
-	 * @description 删除
-	 *
-	 * @param Delete $delete
-	 *
+    /**
+     * @description 删除
+     *
+     * @param Delete $delete
+     *
      * @return bool
      *
      * @throws Exception
-	 */
+     */
     public function delete(Delete $delete) : int;
 
     /**

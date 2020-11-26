@@ -21,148 +21,148 @@ use Kovey\Db\Exception\DbException;
 
 abstract class Base
 {
-	/**
-	 * @description table name
-	 *
-	 * @var string
-	 */
-	protected string $tableName;
+    /**
+     * @description table name
+     *
+     * @var string
+     */
+    protected string $tableName;
 
-	/**
-	 * @description insert data
-	 *
-	 * @param Array $data
-	 *
-	 * @throws DbException
-	 */
-	public function insert(Array $data) : int
-	{
-		$insert = new Insert($this->tableName);
-		foreach ($data as $key => $val) {
-			$insert->$key = $val;
-		}
+    /**
+     * @description insert data
+     *
+     * @param Array $data
+     *
+     * @throws DbException
+     */
+    public function insert(Array $data) : int
+    {
+        $insert = new Insert($this->tableName);
+        foreach ($data as $key => $val) {
+            $insert->$key = $val;
+        }
 
-		return $this->database->insert($insert);
-	}
+        return $this->database->insert($insert);
+    }
 
-	/**
-	 * @description update
-	 *
-	 * @param Array $data
-	 *
-	 * @param Array $condition
-	 *
-	 * @throws DbException
-	 */
-	public function update(Array $data, Array $condition) : int
-	{
-		$update = new Update($this->tableName);
-		foreach ($data as $key => $val) {
-			$update->$key = $val;
-		}
+    /**
+     * @description update
+     *
+     * @param Array $data
+     *
+     * @param Array $condition
+     *
+     * @throws DbException
+     */
+    public function update(Array $data, Array $condition) : int
+    {
+        $update = new Update($this->tableName);
+        foreach ($data as $key => $val) {
+            $update->$key = $val;
+        }
 
-		$update->where($condition);
-		return $this->database->update($update);
-	}
+        $update->where($condition);
+        return $this->database->update($update);
+    }
 
-	/**
-	 * @description fetch row
-	 *
-	 * @param Array $condition
-	 *
-	 * @param Array $columns
-	 *
-	 * @return Array
-	 *
-	 * @throws DbException
-	 */
-	public function fetchRow(Array $condition, Array $columns) : Array | bool
-	{
-		if (empty($columns)) {
-			throw new DbException('selected columns is empty.', 1004); 
-		}
+    /**
+     * @description fetch row
+     *
+     * @param Array $condition
+     *
+     * @param Array $columns
+     *
+     * @return Array
+     *
+     * @throws DbException
+     */
+    public function fetchRow(Array $condition, Array $columns) : Array | bool
+    {
+        if (empty($columns)) {
+            throw new DbException('selected columns is empty.', 1004); 
+        }
 
-		return $this->database->fetchRow($this->tableName, $condition, $columns);
-	}
+        return $this->database->fetchRow($this->tableName, $condition, $columns);
+    }
 
-	/**
-	 * @description fetch all rows
-	 *
-	 * @param Array $condition
-	 *
-	 * @param Array  $columns
-	 *
-	 * @return Array
-	 *
-	 * @throws DbException
-	 */
-	public function fetchAll(Array $condition, Array $columns) : Array
-	{
-		if (empty($columns)) {
-			throw new DbException('selected columns is empty.', 1005); 
-		}
+    /**
+     * @description fetch all rows
+     *
+     * @param Array $condition
+     *
+     * @param Array  $columns
+     *
+     * @return Array
+     *
+     * @throws DbException
+     */
+    public function fetchAll(Array $condition, Array $columns) : Array
+    {
+        if (empty($columns)) {
+            throw new DbException('selected columns is empty.', 1005); 
+        }
 
-		return $this->database->fetchAll($this->tableName, $condition, $columns);
-	}
+        return $this->database->fetchAll($this->tableName, $condition, $columns);
+    }
 
-	/**
-	 * @description batch insert
-	 *
-	 * @param Array $rows
-	 *
-	 * @return int
-	 *
-	 * @throws DbException
-	 */
-	public function batchInsert(Array $rows) : int
-	{
-		if (empty($rows)) {
-			throw new DbException('rows is empty.', 1006);
-		}
+    /**
+     * @description batch insert
+     *
+     * @param Array $rows
+     *
+     * @return int
+     *
+     * @throws DbException
+     */
+    public function batchInsert(Array $rows) : int
+    {
+        if (empty($rows)) {
+            throw new DbException('rows is empty.', 1006);
+        }
 
-		$batchInsert = new BatchInsert($this->tableName);
-		foreach ($rows as $row) {
-			$insert = new Insert($this->tableName);
-			foreach ($row as $key => $val) {
-				$insert->$key = $val;
-			}
+        $batchInsert = new BatchInsert($this->tableName);
+        foreach ($rows as $row) {
+            $insert = new Insert($this->tableName);
+            foreach ($row as $key => $val) {
+                $insert->$key = $val;
+            }
 
-			$batchInsert->add($insert);
-		}
+            $batchInsert->add($insert);
+        }
 
-		return $this->database->batchInsert($batchInsert);
-	}
+        return $this->database->batchInsert($batchInsert);
+    }
 
-	/**
-	 * @description delete
-	 *
-	 * @param Array $data
-	 *
-	 * @param Array $condition
-	 *
-	 * @return int
-	 *
-	 * @throws DbException
-	 */
-	public function delete(Array $condition) : int
-	{
-		$delete = new Delete($this->tableName);
-		$delete->where($condition);
-		return $this->database->delete($delete);
-	}
+    /**
+     * @description delete
+     *
+     * @param Array $data
+     *
+     * @param Array $condition
+     *
+     * @return int
+     *
+     * @throws DbException
+     */
+    public function delete(Array $condition) : int
+    {
+        $delete = new Delete($this->tableName);
+        $delete->where($condition);
+        return $this->database->delete($delete);
+    }
 
-	/**
-	 * @description fetch rows by page
-	 *
-	 * @param Array $condition
-	 *
-	 * @param Array $columns
+    /**
+     * @description fetch rows by page
+     *
+     * @param Array $condition
+     *
+     * @param Array $columns
      *
      * @param int $page
      *
      * @param int $pageSize
      *
-	 * @param DbInterface $db
+     * @param DbInterface $db
      *
      * @param string $tableAs
      *
@@ -172,10 +172,10 @@ abstract class Base
      *
      * @param Array $join
      *
-	 * @return Array | bool
-	 *
-	 * @throws DbException
-	 */
+     * @return Array | bool
+     *
+     * @throws DbException
+     */
     public function fetchByPage(Array $condition, Array $columns, int $page, int $pageSize, string $tableAs = '', string $order = '', string $group = '', Array $join = array())
     {
         $offset = intval(($page - 1) * $pageSize);

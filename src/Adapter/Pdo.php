@@ -63,15 +63,15 @@ class Pdo implements AdapterInterface
         return true;
     }
 
-	/**
-	 * @description get error
-	 *
-	 * @return string
-	 */
-	public function getError() : string
-	{
+    /**
+     * @description get error
+     *
+     * @return string
+     */
+    public function getError() : string
+    {
         return $this->error;
-	}
+    }
 
     /**
      * @description query
@@ -102,11 +102,11 @@ class Pdo implements AdapterInterface
         }
     }
 
-	/**
-	 * @description commit transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description commit transation
+     *
+     * @return bool
+     */
     public function commit() : bool
     {
         try {
@@ -117,11 +117,11 @@ class Pdo implements AdapterInterface
         }
     }
 
-	/**
-	 * @description open transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description open transation
+     *
+     * @return bool
+     */
     public function beginTransaction() : bool
     {
         try {
@@ -142,11 +142,11 @@ class Pdo implements AdapterInterface
         }
     }
 
-	/**
-	 * @description cancel transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description cancel transation
+     *
+     * @return bool
+     */
     public function rollBack() : bool
     {
         try {
@@ -194,7 +194,7 @@ class Pdo implements AdapterInterface
      */
     public function isDisconneted() : bool
     {
-		return preg_match('/2006/', $this->getError()) || preg_match('/2013/', $this->getError()) || preg_match('/2002/', $this->getError());
+        return preg_match('/2006/', $this->getError()) || preg_match('/2013/', $this->getError()) || preg_match('/2002/', $this->getError());
     }
 
     /**

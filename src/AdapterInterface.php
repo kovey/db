@@ -47,26 +47,26 @@ Interface AdapterInterface
      */
     public function query(string $sql);
 
-	/**
-	 * @description commit transation
-	 *
-	 * @return null
-	 */
-	public function commit();
+    /**
+     * @description commit transation
+     *
+     * @return null
+     */
+    public function commit();
 
-	/**
-	 * @description open transation
-	 *
-	 * @return bool
-	 */
-	public function beginTransaction() : bool;
+    /**
+     * @description open transation
+     *
+     * @return bool
+     */
+    public function beginTransaction() : bool;
 
-	/**
-	 * @description cancel transation
-	 *
-	 * @return null
-	 */
-	public function rollBack();
+    /**
+     * @description cancel transation
+     *
+     * @return null
+     */
+    public function rollBack();
 
     /**
      * @description prepare sql

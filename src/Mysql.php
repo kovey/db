@@ -24,31 +24,31 @@ use Kovey\Logger\Db as DbLogger;
 
 class Mysql implements DbInterface
 {
-	/**
-	 * @description database adapter
-	 *
-	 * @var AdapterInterface
-	 */
+    /**
+     * @description database adapter
+     *
+     * @var AdapterInterface
+     */
     private $adapter;
 
-	/**
-	 * @description is dev
-	 *
-	 * @var bool
-	 */
-	private $isDev = false;
+    /**
+     * @description is dev
+     *
+     * @var bool
+     */
+    private $isDev = false;
 
-	/**
-	 * @description construct
-	 *
-	 * @param Array $config
-	 */
+    /**
+     * @description construct
+     *
+     * @param Array $config
+     */
     public function __construct(Array $config)
     {
-		$dev = $config['dev'] ?? 'Off';
-		$this->isDev = $dev === 'On';
+        $dev = $config['dev'] ?? 'Off';
+        $this->isDev = $dev === 'On';
 
-		$this->adapter = Adapter::factory($config['adapter'] ?? Adapter::DB_ADAPTER_PDO, new Config(array(
+        $this->adapter = Adapter::factory($config['adapter'] ?? Adapter::DB_ADAPTER_PDO, new Config(array(
             'database' => $config['dbname'],
             'host' => $config['host'],
             'port' => $config['port'],
@@ -63,35 +63,35 @@ class Mysql implements DbInterface
         }
     }
 
-	/**
-	 * @description connect to server
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description connect to server
+     *
+     * @return bool
+     */
     public function connect() : bool
     {
-		return $this->adapter->connect();
+        return $this->adapter->connect();
     }
 
-	/**
-	 * @description get error
-	 *
-	 * @return string
-	 */
-	public function getError() : string
-	{
+    /**
+     * @description get error
+     *
+     * @return string
+     */
+    public function getError() : string
+    {
         return $this->adapter->getError();
-	}
+    }
 
-	/**
-	 * @description query
-	 *
-	 * @param string $sql
-	 *
-	 * @return mixed
-	 *
-	 * @throws DbException"
-	 */
+    /**
+     * @description query
+     *
+     * @param string $sql
+     *
+     * @return mixed
+     *
+     * @throws DbException"
+     */
     public function query(string $sql) : Array
     {
         $begin = 0;
@@ -108,54 +108,54 @@ class Mysql implements DbInterface
             }
         }
 
-		return $result;
+        return $result;
     }
 
-	/**
-	 * @description commit transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description commit transation
+     *
+     * @return bool
+     */
     public function commit() : bool
     {
         return $this->adapter->commit();
     }
 
-	/**
-	 * @description begin transation
-	 *
-	 * @return bool
+    /**
+     * @description begin transation
+     *
+     * @return bool
      *
      * @throws DbException
-	 */
+     */
     public function beginTransaction() : bool
     {
         return $this->adapter->beginTransaction();
     }
 
-	/**
-	 * @description rollback transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description rollback transation
+     *
+     * @return bool
+     */
     public function rollBack() : bool
     {
         return $this->adapter->rollback();
     }
 
-	/**
-	 * @description fetch row
-	 *
-	 * @param string $table
-	 *
-	 * @param Array $condition
-	 *
-	 * @param Array $columns
-	 *
-	 * @return Array | bool
-	 *
-	 * @throws DbException
-	 */
+    /**
+     * @description fetch row
+     *
+     * @param string $table
+     *
+     * @param Array $condition
+     *
+     * @param Array $columns
+     *
+     * @return Array | bool
+     *
+     * @throws DbException
+     */
     public function fetchRow(string $table, Array $condition, Array $columns = array()) : Array | bool
     {
         $select = new Select($table);
@@ -182,19 +182,19 @@ class Mysql implements DbInterface
         return $this->select($select, $select::SINGLE);
     }
 
-	/**
-	 * @description fetch all rows
-	 *
-	 * @param string $table
-	 *
-	 * @param Array $condition
-	 *
-	 * @param Array $columns
-	 *
-	 * @return Array
-	 *
-	 * @throws DbException
-	 */
+    /**
+     * @description fetch all rows
+     *
+     * @param string $table
+     *
+     * @param Array $condition
+     *
+     * @param Array $columns
+     *
+     * @return Array
+     *
+     * @throws DbException
+     */
     public function fetchAll(string $table, Array $condition = array(), Array $columns = array()) : array
     {
         $select = new Select($table);
@@ -217,25 +217,25 @@ class Mysql implements DbInterface
 
             $select->where($where);
         }
-		
-		$rows = $this->select($select);
-		if ($rows === false) {
-			return array();
-		}
+        
+        $rows = $this->select($select);
+        if ($rows === false) {
+            return array();
+        }
 
-		return $rows;
+        return $rows;
     }
 
-	/**
-	 * @description sql update
-	 *
-	 * @param Update $update
-	 *
-	 * @return int
-	 */
+    /**
+     * @description sql update
+     *
+     * @param Update $update
+     *
+     * @return int
+     */
     public function update(Update $update) : int
     {
-		$sth = $this->prepare($update);
+        $sth = $this->prepare($update);
         $affected = $this->adapter->affectedRows($sth);
         if ($affected < 1) {
             throw new DbException('update sql affected rows is ' . $affected, 1001);
@@ -244,16 +244,16 @@ class Mysql implements DbInterface
         return $affected;
     }
 
-	/**
-	 * @description sql insert
-	 *
-	 * @param Insert $insert
-	 *
-	 * @return int
-	 */
+    /**
+     * @description sql insert
+     *
+     * @param Insert $insert
+     *
+     * @return int
+     */
     public function insert(Insert $insert) : int
     {
-		$sth = $this->prepare($insert);
+        $sth = $this->prepare($insert);
         $affected = $this->adapter->affectedRows($sth);
         if ($affected < 1) {
             throw new DbException('insert sql affected rows is ' . $affected, 1001);
@@ -262,15 +262,15 @@ class Mysql implements DbInterface
         return $this->adapter->getLastInsertId();
     }
 
-	/**
-	 * @description prepare sql
-	 *
-	 * @param SqlInterface $sqlObj
-	 *
-	 * @return Swoole\Coroutine\MySQL\Statement
-	 */
-	private function prepare(SqlInterface $sqlObj)
-	{
+    /**
+     * @description prepare sql
+     *
+     * @param SqlInterface $sqlObj
+     *
+     * @return Swoole\Coroutine\MySQL\Statement
+     */
+    private function prepare(SqlInterface $sqlObj)
+    {
         $sql = $sqlObj->getPrepareSql();
         if ($sql === false) {
             throw new DbException('sql is empty', 1000);
@@ -315,40 +315,40 @@ class Mysql implements DbInterface
                 DbLogger::write($sqlObj->toString(), microtime(true) - $begin);
             }
         }
-	}
+    }
 
-	/**
-	 * @description sql select
-	 *
-	 * @param Select $select
-	 *
-	 * @param int $type
-	 *
-	 * @return Array | bool
-	 */
+    /**
+     * @description sql select
+     *
+     * @param Select $select
+     *
+     * @param int $type
+     *
+     * @return Array | bool
+     */
     public function select(Select $select, $type = Select::ALL)
     {
-		$sth = $this->prepare($select);
+        $sth = $this->prepare($select);
 
         if ($type == Select::SINGLE) {
             return $this->adapter->fetch($sth);
-		}
+        }
         
-		return $sth->fetchAll();
+        return $sth->fetchAll();
     }
 
-	/**
-	 * @description close connect
-	 *
-	 * @return null
-	 */
-	public function __destruct()
-	{
-		try {
-			$this->adapter->disconnet();
-		} catch (\Throwable $e) {
-		}
-	}
+    /**
+     * @description close connect
+     *
+     * @return null
+     */
+    public function __destruct()
+    {
+        try {
+            $this->adapter->disconnet();
+        } catch (\Throwable $e) {
+        }
+    }
 
     /**
      * @description batch insert
@@ -371,18 +371,18 @@ class Mysql implements DbInterface
         return $affected;
     }
 
-	/**
-	 * @description delete
-	 *
-	 * @param Delete $delete
-	 *
+    /**
+     * @description delete
+     *
+     * @param Delete $delete
+     *
      * @return int
      *
      * @throws DbException
-	 */
+     */
     public function delete(Delete $delete) : int
     {
-		$sth = $this->prepare($delete);
+        $sth = $this->prepare($delete);
         $affected = $this->adapter->affectedRows($sth);
         if ($affected < 1) {
             throw new DbException('batch insert sql affected rows is ' . $affected, 1001);

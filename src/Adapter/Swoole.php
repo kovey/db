@@ -69,13 +69,13 @@ class Swoole implements AdapterInterface
         }
     }
 
-	/**
-	 * @description get error
-	 *
-	 * @return string
-	 */
-	public function getError() : string
-	{
+    /**
+     * @description get error
+     *
+     * @return string
+     */
+    public function getError() : string
+    {
         if (!empty($this->error)) {
             return $this->error;
         }
@@ -84,7 +84,7 @@ class Swoole implements AdapterInterface
             'error code: %s, error msg: %s, connect error code: %s, connect error msg: %s',
             $this->connection->errno, $this->connection->error, $this->connection->connect_errno, $this->connection->connect_error
         );
-	}
+    }
 
     /**
      * @description query
@@ -95,35 +95,35 @@ class Swoole implements AdapterInterface
      */
     public function query(string $sql)
     {
-		if (!$this->connection->connected) {
+        if (!$this->connection->connected) {
             if (!$this->connect()) {
                 throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
             }
-		}
+        }
 
         $result = $this->connection->query($sql);
-		if (!$result) {
-			if ($this->isDisconneted()) {
+        if (!$result) {
+            if ($this->isDisconneted()) {
                 if (!$this->connect()) {
                     throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
                 }
-			}
+            }
 
-			$result = $this->connection->query($sql);
-		}
+            $result = $this->connection->query($sql);
+        }
 
         if (!$result) {
             throw new DbException($this->connection->error, $this->connection->errno);
         }
 
-	    return $this->connection->fetchAll();
+        return $this->connection->fetchAll();
     }
 
-	/**
-	 * @description commit transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description commit transation
+     *
+     * @return bool
+     */
     public function commit()
     {
         $result = $this->connection->commit();
@@ -135,21 +135,21 @@ class Swoole implements AdapterInterface
         return $result;
     }
 
-	/**
-	 * @description open transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description open transation
+     *
+     * @return bool
+     */
     public function beginTransaction() : bool
     {
-		if (!$this->connection->connected) {
+        if (!$this->connection->connected) {
             if (!$this->connect()) {
                 throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
             }
-		}
+        }
 
-		if (!$this->connection->begin()) {
-			if ($this->isDisconneted()) {
+        if (!$this->connection->begin()) {
+            if ($this->isDisconneted()) {
                 if (!$this->connect()) {
                     throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
                 }
@@ -159,20 +159,20 @@ class Swoole implements AdapterInterface
 
                 $this->isInTransaction = true;
                 return true;
-			}
+            }
 
             throw new DbException($this->connection->error, $this->connection->errno);
-		}
+        }
 
         $this->isInTransaction = true;
-		return true;
+        return true;
     }
 
-	/**
-	 * @description roll back transation
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description roll back transation
+     *
+     * @return bool
+     */
     public function rollBack() : bool
     {
         $result = $this->connection->rollback();
@@ -189,7 +189,7 @@ class Swoole implements AdapterInterface
      */
     public function prepare(string $sql)
     {
-		if (!$this->connection->connected) {
+        if (!$this->connection->connected) {
             if ($this->isInTransaction) {
                 throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
             }
@@ -197,26 +197,26 @@ class Swoole implements AdapterInterface
             if (!$this->connect()) {
                 throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
             }
-		}
+        }
 
         $sth = $this->connection->prepare($sql);
-		if (!$sth) {
+        if (!$sth) {
             if ($this->isInTransaction) {
                 throw new DbException($this->connection->error, $this->connection->errno);
             }
-			if ($this->isDisconneted()) {
+            if ($this->isDisconneted()) {
                 if (!$this->connect()) {
                     throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
                 }
 
-				$sth = $this->connection->prepare($sql);
-				if (!$sth) {
+                $sth = $this->connection->prepare($sql);
+                if (!$sth) {
                     throw new DbException($this->connection->error, $this->connection->errno);
-				}
-			} else {
+                }
+            } else {
                 throw new DbException($this->connection->error, $this->connection->errno);
-			}
-		}
+            }
+        }
 
         return $sth;
     }
@@ -228,7 +228,7 @@ class Swoole implements AdapterInterface
      */
     public function isDisconneted() : bool
     {
-		return !$this->connection->connected || preg_match('/2006/', $this->getError()) || preg_match('/2013/', $this->getError()) || preg_match('/2002/', $this->getError());
+        return !$this->connection->connected || preg_match('/2006/', $this->getError()) || preg_match('/2013/', $this->getError()) || preg_match('/2002/', $this->getError());
     }
 
     /**
@@ -319,28 +319,28 @@ class Swoole implements AdapterInterface
      */
     public function exec($sql) : int
     {
-		if (!$this->connection->connected) {
+        if (!$this->connection->connected) {
             if ($this->isInTransaction) {
                 throw new DbException($this->connection->error, $this->connection->errno);
             }
             if (!$this->connect()) {
                 throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
             }
-		}
+        }
 
         $result = $this->connection->prepare($sql);
-		if ($result === false) {
-			if ($this->isDisconneted()) {
+        if ($result === false) {
+            if ($this->isDisconneted()) {
                 if ($this->isInTransaction) {
                     throw new DbException($this->connection->error, $this->connection->errno);
                 }
                 if (!$this->connect()) {
                     throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
                 }
-			}
+            }
 
-			$result = $this->connection->prepare($sql);
-		}
+            $result = $this->connection->prepare($sql);
+        }
 
         if ($result === false) {
             throw new DbException($this->connection->error, $this->connection->errno);
@@ -348,16 +348,16 @@ class Swoole implements AdapterInterface
 
         $result = $result->execute(array());
         if ($result === false) {
-			if ($this->isDisconneted()) {
+            if ($this->isDisconneted()) {
                 if ($this->isInTransaction) {
                     throw new DbException($this->connection->error, $this->connection->errno);
                 }
                 if (!$this->connect()) {
                     throw new DbException($this->connection->connect_error, $this->connection->connect_errno);
                 }
-			}
+            }
 
-			$result = $this->connection->prepare($sql);
+            $result = $this->connection->prepare($sql);
             if ($result === false) {
                 throw new DbException($this->connection->error, $this->connection->errno);
             }

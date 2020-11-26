@@ -15,76 +15,76 @@ use Kovey\Db\SqlInterface;
 
 class Delete implements SqlInterface
 {
-	/**
-	 * @description 表名
-	 *
-	 * @var string
-	 */
+    /**
+     * @description 表名
+     *
+     * @var string
+     */
     private string $table;
 
-	/**
-	 * @description 更新的字段
-	 *
-	 * @var Array
-	 */
+    /**
+     * @description 更新的字段
+     *
+     * @var Array
+     */
     private Array $fields = array();
 
-	/**
-	 * @description 字段的值
-	 *
-	 * @var Array
-	 */
+    /**
+     * @description 字段的值
+     *
+     * @var Array
+     */
     private Array $data = array();
 
-	/**
-	 * @description 更新格式
-	 *
-	 * @var string
-	 */
+    /**
+     * @description 更新格式
+     *
+     * @var string
+     */
     const SQL_FORMAT = 'DELETE FROM %s';
 
-	/**
-	 * @description 条件
-	 *
-	 * @var Where
-	 */
+    /**
+     * @description 条件
+     *
+     * @var Where
+     */
     private Where $where;
 
-	/**
-	 * @description 构造
-	 *
-	 * @var string $table
-	 */
+    /**
+     * @description 构造
+     *
+     * @var string $table
+     */
     public function __construct(string $table)
     {
         $this->where = new Where();
-		$info = explode('.', $table);
-		array_walk($info, function (&$row) {
-			$row = $this->format($row);
-		});
+        $info = explode('.', $table);
+        array_walk($info, function (&$row) {
+            $row = $this->format($row);
+        });
 
-		$this->table = implode('.', $info);
+        $this->table = implode('.', $info);
     }
 
-	/**
-	 * @description 格式化字段
-	 *
-	 * @param string $name
-	 *
-	 * @return string
-	 */
-	private function format(string $name) : string
-	{
-		return sprintf('`%s`', $name);
-	}
+    /**
+     * @description 格式化字段
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    private function format(string $name) : string
+    {
+        return sprintf('`%s`', $name);
+    }
 
-	/**
-	 * @description 条件
-	 *
-	 * @param Array $condition
-	 *
-	 * @return Update
-	 */
+    /**
+     * @description 条件
+     *
+     * @param Array $condition
+     *
+     * @return Update
+     */
     public function where(Array $condition) : Delete
     {
         foreach ($condition as $key => $val) {
@@ -101,14 +101,14 @@ class Delete implements SqlInterface
             $this->where->eq($key, $val);
         }
 
-		return $this;
+        return $this;
     }
 
-	/**
-	 * @description 准备SQL语句
-	 *
-	 * @return string | null
-	 */
+    /**
+     * @description 准备SQL语句
+     *
+     * @return string | null
+     */
     public function getPrepareSql() : ? string
     {
         $sql = sprintf(self::SQL_FORMAT, $this->table); 
@@ -120,35 +120,35 @@ class Delete implements SqlInterface
         return $sql;
     }
 
-	/**
-	 * @description 获取绑定数据
-	 *
-	 * @return Array
-	 */
+    /**
+     * @description 获取绑定数据
+     *
+     * @return Array
+     */
     public function getBindData() : Array
     {
         return $this->where->getBindData();
     }
 
-	/**
-	 * @description 格式化SQL
-	 *
-	 * @return string
-	 */
-	public function toString() : string
-	{
-		$sql = $this->getPrepareSql();
-		$data = $this->getBindData();
-		if (count($data) < 1) {
-			return $sql;
-		}
+    /**
+     * @description 格式化SQL
+     *
+     * @return string
+     */
+    public function toString() : string
+    {
+        $sql = $this->getPrepareSql();
+        $data = $this->getBindData();
+        if (count($data) < 1) {
+            return $sql;
+        }
 
-		foreach ($data as $needle) {
-			$sql = substr_replace($sql, '\'' . $needle . '\'', strpos($sql, '?'), 1);
-		}
+        foreach ($data as $needle) {
+            $sql = substr_replace($sql, '\'' . $needle . '\'', strpos($sql, '?'), 1);
+        }
 
-		return $sql;
-	}
+        return $sql;
+    }
 
     public function __toString() : string
     {

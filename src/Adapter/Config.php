@@ -15,39 +15,39 @@ use Kovey\Db\Exception\DbException;
 
 class Config
 {
-	/**
-	 * @description database name
-	 *
-	 * @var string
-	 */
+    /**
+     * @description database name
+     *
+     * @var string
+     */
     private $database;
 
-	/**
-	 * @description server address
-	 *
-	 * @var string
-	 */
+    /**
+     * @description server address
+     *
+     * @var string
+     */
     private $host;
 
-	/**
-	 * @description user
-	 *
-	 * @var string
-	 */
+    /**
+     * @description user
+     *
+     * @var string
+     */
     private $username;
 
-	/**
-	 * @description password
-	 *
-	 * @var string
-	 */
+    /**
+     * @description password
+     *
+     * @var string
+     */
     private $password;
 
-	/**
-	 * @description port
-	 *
-	 * @var string
-	 */
+    /**
+     * @description port
+     *
+     * @var string
+     */
     private $port;
 
     /**
