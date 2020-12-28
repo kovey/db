@@ -20,49 +20,49 @@ class Config
      *
      * @var string
      */
-    private $database;
+    private string $database = '';
 
     /**
      * @description server address
      *
      * @var string
      */
-    private $host;
+    private string $host = '';
 
     /**
      * @description user
      *
      * @var string
      */
-    private $username;
+    private string $username = '';
 
     /**
      * @description password
      *
      * @var string
      */
-    private $password;
+    private string $password = '';
 
     /**
      * @description port
      *
      * @var string
      */
-    private $port;
+    private string $port = '0';
 
     /**
      * @description 字符集
      *
      * @var string
      */
-    private $charset;
+    private string $charset = 'uft8';
 
     /**
      * @description options
      *
      * @var Array
      */
-    private $options;
+    private Array $options;
 
     public function __construct(Array $config)
     {
@@ -99,37 +99,37 @@ class Config
         throw new DbException("$name is unkown", 1009);
     }
 
-    public function getDatabase()
+    public function getDatabase() : string
     {
         return $this->database;
     }
 
-    public function getHost()
+    public function getHost() : string
     {
         return $this->host;
     }
 
-    public function getUser()
+    public function getUser() : string
     {
         return $this->username;
     }
 
-    public function getPassword()
+    public function getPassword() : string
     {
         return $this->password;
     }
 
-    public function getPort()
+    public function getPort() : string
     {
         return $this->port;
     }
 
-    public function getCharset()
+    public function getCharset() : string
     {
         return $this->charset;
     }
 
-    public function getOptions()
+    public function getOptions() : Array
     {
         return $this->options;
     }

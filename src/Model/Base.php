@@ -26,7 +26,7 @@ abstract class Base
      *
      * @var string
      */
-    protected string $tableName;
+    protected string $tableName = '';
 
     /**
      * @description insert data
