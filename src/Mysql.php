@@ -156,10 +156,15 @@ class Mysql implements DbInterface
      *
      * @throws DbException
      */
-    public function fetchRow(string $table, Array $condition, Array $columns = array()) : Array | bool
+    public function fetchRow(string $table, Array | Where $condition, Array $columns = array()) : Array | bool
     {
         $select = new Select($table);
         $select->columns($columns);
+        if ($condition instanceof Where) {
+            $select->where($condition);
+            return $this->select($select, $select::SINGLE);
+        }
+
         if (count($condition) > 0) {
             $where = new Where();
             foreach ($condition as $key => $val) {
@@ -195,10 +200,20 @@ class Mysql implements DbInterface
      *
      * @throws DbException
      */
-    public function fetchAll(string $table, Array $condition = array(), Array $columns = array()) : array
+    public function fetchAll(string $table, Array | Where $condition = array(), Array $columns = array()) : array
     {
         $select = new Select($table);
         $select->columns($columns);
+        if ($condition instanceof Where) {
+            $select->where($condition);
+            $rows = $this->select($select);
+            if ($rows === false) {
+                return array();
+            }
+
+            return $rows;
+        }
+
         if (count($condition) > 0) {
             $where = new Where();
             foreach ($condition as $key => $val) {

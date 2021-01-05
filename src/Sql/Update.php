@@ -205,12 +205,17 @@ class Update implements SqlInterface
     /**
      * @description 条件
      *
-     * @param Array $condition
+     * @param Array | Where $condition
      *
      * @return Update
      */
-    public function where(Array $condition) : Update
+    public function where(Array | Where $condition) : Update
     {
+        if ($condition instanceof Where) {
+            $this->where = $condition;
+            return $this;
+        }
+
         foreach ($condition as $key => $val) {
             if (is_numeric($key)) {
                 $this->where->statement($val);
