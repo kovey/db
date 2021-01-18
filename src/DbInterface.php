@@ -128,7 +128,7 @@ interface DbInterface
      *
      * @return Array | bool
      */
-    public function select(Select $select, int $type = Select::ALL);
+    public function select(Select $select, int $type = Select::ALL) : Array | bool;
 
     /**
      * @description batch insert

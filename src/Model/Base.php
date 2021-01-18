@@ -176,7 +176,7 @@ abstract class Base
      *
      * @throws DbException
      */
-    public function fetchByPage(Array | Where $condition, Array $columns, int $page, int $pageSize, string $tableAs = '', string $order = '', string $group = '', Array $join = array())
+    public function fetchByPage(Array | Where $condition, Array $columns, int $page, int $pageSize, string $tableAs = '', string $order = '', string $group = '', Array $join = array()) : Array
     {
         $offset = intval(($page - 1) * $pageSize);
         $select = new Select($this->tableName, $tableAs);

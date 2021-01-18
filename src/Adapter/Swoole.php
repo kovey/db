@@ -14,6 +14,7 @@ namespace Kovey\Db\Adapter;
 use Swoole\Coroutine\MySQL;
 use Kovey\Db\AdapterInterface;
 use Kovey\Db\Exception\DbException;
+use Swoole\Coroutine\MySQL\Statement;
 
 class Swoole implements AdapterInterface
 {
@@ -93,7 +94,7 @@ class Swoole implements AdapterInterface
      *
      * @return mixed
      */
-    public function query(string $sql)
+    public function query(string $sql) : Array
     {
         if (!$this->connection->connected) {
             if (!$this->connect()) {
@@ -124,7 +125,7 @@ class Swoole implements AdapterInterface
      *
      * @return bool
      */
-    public function commit()
+    public function commit() : bool
     {
         $result = $this->connection->commit();
         if (!$result) {
@@ -187,7 +188,7 @@ class Swoole implements AdapterInterface
      *
      * @return mixed
      */
-    public function prepare(string $sql)
+    public function prepare(string $sql) : Statement
     {
         if (!$this->connection->connected) {
             if ($this->isInTransaction) {

@@ -21,6 +21,7 @@ use Kovey\Db\Adapter\Config;
 use Kovey\Db\AdapterInterface;
 use Kovey\Db\Exception\DbException;
 use Kovey\Logger\Db as DbLogger;
+use Swoole\Coroutine\MySQL\Statement;
 
 class Mysql implements DbInterface
 {
@@ -282,9 +283,9 @@ class Mysql implements DbInterface
      *
      * @param SqlInterface $sqlObj
      *
-     * @return Swoole\Coroutine\MySQL\Statement
+     * @return Statement | \PDOStatement
      */
-    private function prepare(SqlInterface $sqlObj)
+    private function prepare(SqlInterface $sqlObj) : Statement | \PDOStatement
     {
         $sql = $sqlObj->getPrepareSql();
         if ($sql === false) {
@@ -341,7 +342,7 @@ class Mysql implements DbInterface
      *
      * @return Array | bool
      */
-    public function select(Select $select, $type = Select::ALL)
+    public function select(Select $select, $type = Select::ALL) : bool | Array
     {
         $sth = $this->prepare($select);
 

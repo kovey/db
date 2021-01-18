@@ -78,9 +78,9 @@ class Pdo implements AdapterInterface
      *
      * @param string $sql
      *
-     * @return mixed
+     * @return Array
      */
-    public function query(string $sql)
+    public function query(string $sql) : Array
     {
         try {
             $result = $this->connection->query($sql);
@@ -164,7 +164,7 @@ class Pdo implements AdapterInterface
      *
      * @return mixed
      */
-    public function prepare(string $sql)
+    public function prepare(string $sql) : \PDOStatement
     {
         try {
             return $this->connection->prepare($sql);

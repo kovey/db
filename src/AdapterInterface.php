@@ -12,6 +12,7 @@
 namespace Kovey\Db;
 
 use Kovey\Db\Adapter\Config;
+use Swoole\Coroutine\MySQL\Statement;
 
 Interface AdapterInterface
 {
@@ -45,14 +46,14 @@ Interface AdapterInterface
      *
      * @return mixed
      */
-    public function query(string $sql);
+    public function query(string $sql) : Array;
 
     /**
      * @description commit transation
      *
-     * @return null
+     * @return bool
      */
-    public function commit();
+    public function commit() : bool;
 
     /**
      * @description open transation
@@ -64,9 +65,9 @@ Interface AdapterInterface
     /**
      * @description cancel transation
      *
-     * @return null
+     * @return bool
      */
-    public function rollBack();
+    public function rollBack() : bool;
 
     /**
      * @description prepare sql
@@ -75,7 +76,7 @@ Interface AdapterInterface
      *
      * @return mixed
      */
-    public function prepare(string $sql);
+    public function prepare(string $sql) : Statement | \PDOStatement;
 
     /**
      * @description is disconneted
