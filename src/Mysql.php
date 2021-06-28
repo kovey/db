@@ -420,7 +420,7 @@ class Mysql implements DbInterface
      *
      * @throws DbException
      */
-    public function transaction(callable $fun, $finally, ...$params) : bool
+    public function transaction(callable $fun, mixed $finally, mixed ...$params) : bool
     {
         if (!$this->beginTransaction()) {
             return false;
@@ -473,5 +473,15 @@ class Mysql implements DbInterface
     public function inTransaction() : bool
     {
         return $this->adapter->inTransaction();
+    }
+
+    /**
+     * @description get last insert id
+     *
+     * @return int
+     */
+    public function getLastInsertId() : int
+    {
+        return $this->adapter->getLastInsertId();
     }
 }

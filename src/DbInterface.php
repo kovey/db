@@ -185,4 +185,11 @@ interface DbInterface
      * @return bool
      */
     public function inTransaction() : bool;
+
+    /**
+     * @description get last insert id
+     *
+     * @return int
+     */
+    public function getLastInsertId() : int;
 }
