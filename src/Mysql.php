@@ -105,7 +105,7 @@ class Mysql implements DbInterface
             throw $e;
         } finally {
             if ($this->isDev) {
-                DbLogger::write($sql, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+                DbLogger::write($sql, $result ?? null, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
             }
         }
 
@@ -251,10 +251,21 @@ class Mysql implements DbInterface
      */
     public function update(Update $update) : int
     {
-        $sth = $this->prepare($update);
-        $affected = $this->adapter->affectedRows($sth);
-        if ($affected < 1) {
-            throw new DbException('update sql affected rows is ' . $affected, 1001);
+        $begin = 0;
+        if ($this->isDev) {
+            $begin = microtime(true);
+        }
+
+        try {
+            $sth = $this->prepare($update);
+            $affected = $this->adapter->affectedRows($sth);
+            if ($affected < 1) {
+                throw new DbException('update sql affected rows is ' . $affected, 1001);
+            }
+        } finally {
+            if ($this->isDev) {
+                DbLogger::write($update->toString(), $affected ?? null,  microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+            }
         }
 
         return $affected;
@@ -269,13 +280,26 @@ class Mysql implements DbInterface
      */
     public function insert(Insert $insert) : int
     {
-        $sth = $this->prepare($insert);
-        $affected = $this->adapter->affectedRows($sth);
-        if ($affected < 1) {
-            throw new DbException('insert sql affected rows is ' . $affected, 1001);
+        $begin = 0;
+        if ($this->isDev) {
+            $begin = microtime(true);
         }
 
-        return $this->adapter->getLastInsertId();
+        try {
+            $sth = $this->prepare($insert);
+            $affected = $this->adapter->affectedRows($sth);
+            if ($affected < 1) {
+                throw new DbException('insert sql affected rows is ' . $affected, 1001);
+            }
+
+            $lastInsertId = $this->adapter->getLastInsertId();
+        } finally {
+            if ($this->isDev) {
+                DbLogger::write($insert->toString(), $lastInsertId ?? null,  microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+            }
+        }
+
+        return $lastInsertId;
     }
 
     /**
@@ -290,11 +314,6 @@ class Mysql implements DbInterface
         $sql = $sqlObj->getPrepareSql();
         if ($sql === false) {
             throw new DbException('sql is empty', 1000);
-        }
-
-        $begin = 0;
-        if ($this->isDev) {
-            $begin = microtime(true);
         }
 
         try {
@@ -326,10 +345,6 @@ class Mysql implements DbInterface
             throw new DbException($e->getMessage(), $e->getCode());
         } catch (DbException $e) {
             throw $e;
-        } finally {
-            if ($this->isDev) {
-                DbLogger::write($sqlObj->toString(), microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
-            }
         }
     }
 
@@ -344,13 +359,26 @@ class Mysql implements DbInterface
      */
     public function select(Select $select, $type = Select::ALL) : bool | Array
     {
-        $sth = $this->prepare($select);
-
-        if ($type == Select::SINGLE) {
-            return $this->adapter->fetch($sth);
+        $begin = 0;
+        if ($this->isDev) {
+            $begin = microtime(true);
         }
-        
-        return $sth->fetchAll();
+
+        try {
+            $result = null;
+            $sth = $this->prepare($select);
+            if ($type == Select::SINGLE) {
+                $result = $this->adapter->fetch($sth);
+            } else {
+                $result = $sth->fetchAll();
+            }
+        } finally {
+            if ($this->isDev) {
+                DbLogger::write($select->toString(), $result ?? null, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -378,10 +406,21 @@ class Mysql implements DbInterface
      */
     public function batchInsert(BatchInsert $batchInsert) : int
     {
-        $sth = $this->prepare($batchInsert);
-        $affected = $this->adapter->affectedRows($sth);
-        if ($affected < 1) {
-            throw new DbException('batch insert sql affected rows is ' . $affected, 1001);
+        $begin = 0;
+        if ($this->isDev) {
+            $begin = microtime(true);
+        }
+
+        try {
+            $sth = $this->prepare($batchInsert);
+            $affected = $this->adapter->affectedRows($sth);
+            if ($affected < 1) {
+                throw new DbException('batch batch insert sql affected rows is ' . $affected, 1001);
+            }
+        } finally {
+            if ($this->isDev) {
+                DbLogger::write($batchInsert->toString(), $affected ?? null, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+            }
         }
 
         return $affected;
@@ -398,10 +437,20 @@ class Mysql implements DbInterface
      */
     public function delete(Delete $delete) : int
     {
-        $sth = $this->prepare($delete);
-        $affected = $this->adapter->affectedRows($sth);
-        if ($affected < 1) {
-            throw new DbException('batch insert sql affected rows is ' . $affected, 1001);
+        $begin = 0;
+        if ($this->isDev) {
+            $begin = microtime(true);
+        }
+        try {
+            $sth = $this->prepare($delete);
+            $affected = $this->adapter->affectedRows($sth);
+            if ($affected < 1) {
+                throw new DbException('batch delete sql affected rows is ' . $affected, 1001);
+            }
+        } finally {
+            if ($this->isDev) {
+                DbLogger::write($delete->toString(), $affected ?? null, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+            }
         }
 
         return $affected;
@@ -455,14 +504,16 @@ class Mysql implements DbInterface
             $begin = microtime(true);
         }
         try {
-            return $this->adapter->exec($sql);
+            $result = $this->adapter->exec($sql);
         } catch (DbException $e) {
             throw $e;
         } finally {
             if ($this->isDev) {
-                DbLogger::write($sql, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+                DbLogger::write($sql, $result ?? null, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
             }
         }
+
+        return $result;
     }
     
     /**
