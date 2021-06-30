@@ -105,7 +105,7 @@ class Mysql implements DbInterface
             throw $e;
         } finally {
             if ($this->isDev) {
-                DbLogger::write($sql, microtime(true) - $begin);
+                DbLogger::write($sql, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
             }
         }
 
@@ -328,7 +328,7 @@ class Mysql implements DbInterface
             throw $e;
         } finally {
             if ($this->isDev) {
-                DbLogger::write($sqlObj->toString(), microtime(true) - $begin);
+                DbLogger::write($sqlObj->toString(), microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
             }
         }
     }
@@ -460,7 +460,7 @@ class Mysql implements DbInterface
             throw $e;
         } finally {
             if ($this->isDev) {
-                DbLogger::write($sql, microtime(true) - $begin);
+                DbLogger::write($sql, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
             }
         }
     }
