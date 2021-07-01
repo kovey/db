@@ -12,6 +12,7 @@
 namespace Kovey\Db\Sql;
 
 use Kovey\Db\SqlInterface;
+use Kovey\Db\ForUpdate\Type;
 
 class Select implements SqlInterface
 {
@@ -142,11 +143,18 @@ class Select implements SqlInterface
     private Having $having;
 
     /**
-     * @description 表别名
+     * @description table alias
+     *
+     * @var string | bool
+     */
+    private string | bool $tableAs;
+
+    /**
+     * @description is for update
      *
      * @var string
      */
-    private string | bool $tableAs;
+    private string $forUpdateType = Type::FOR_UPDATE_NO;
 
     /**
      * @description 构造函数
@@ -469,6 +477,10 @@ class Select implements SqlInterface
             $sql .= $limit;
         }
 
+        if ($this->forUpdateType != Type::FOR_UPDATE_NO) {
+            $sql .= Type::getForUpdateSql($this->forUpdateType);
+        }
+
         return $sql;
     }
 
@@ -673,8 +685,26 @@ class Select implements SqlInterface
         return $sql;
     }
 
+    /**
+     * @description to string
+     *
+     * @return string;
+     */
     public function __toString() : string
     {
         return $this->toString();
+    }
+
+    /**
+     * @description for update
+     *
+     * @param string $type
+     *
+     * @return Select
+     */
+    public function forUpdate(string $type = Type::FOR_UPDATE_NORMAL) : Select
+    {
+        $this->forUpdateType = $type;
+        return $this;
     }
 }

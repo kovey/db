@@ -18,6 +18,7 @@ use Kovey\Db\Sql\Update;
 use Kovey\Db\Sql\Delete;
 use Kovey\Db\Sql\BatchInsert;
 use Kovey\Db\Exception\DbException;
+use Kovey\Db\ForUpdate\Type;
 
 abstract class Base
 {
@@ -58,6 +59,16 @@ abstract class Base
     {
         $update = new Update($this->tableName);
         foreach ($data as $key => $val) {
+            if (preg_match('/\+=/', $val)) {
+                $update->addSelf($key, trim(str_replace('+=', '', $val)));
+                continue;
+            }
+
+            if (preg_match('/-=/', $val)) {
+                $update->subSelf($key, trim(str_replace('-=', '', $val)));
+                continue;
+            }
+
             $update->$key = $val;
         }
 
@@ -72,17 +83,19 @@ abstract class Base
      *
      * @param Array $columns
      *
+     * @param string $forUpdateType
+     *
      * @return Array
      *
      * @throws DbException
      */
-    public function fetchRow(Array | Where $condition, Array $columns) : Array | bool
+    public function fetchRow(Array | Where $condition, Array $columns, string $forUpdateType = Type::FOR_UPDATE_NO) : Array | bool
     {
         if (empty($columns)) {
             throw new DbException('selected columns is empty.', 1004); 
         }
 
-        return $this->database->fetchRow($this->tableName, $condition, $columns);
+        return $this->database->fetchRow($this->tableName, $condition, $columns, $forUpdateType);
     }
 
     /**
@@ -231,5 +244,15 @@ abstract class Base
             'totalPage' => ceil($totalCount / $pageSize),
             'list' => $rows
         );
+    }
+
+    /**
+     * @description get table name
+     *
+     * @return string
+     */
+    public function getTableName() : string
+    {
+        return $this->tableName;
     }
 }

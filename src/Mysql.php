@@ -22,6 +22,7 @@ use Kovey\Db\AdapterInterface;
 use Kovey\Db\Exception\DbException;
 use Kovey\Logger\Db as DbLogger;
 use Swoole\Coroutine\MySQL\Statement;
+use Kovey\Db\ForUpdate\Type;
 
 class Mysql implements DbInterface
 {
@@ -153,14 +154,20 @@ class Mysql implements DbInterface
      *
      * @param Array $columns
      *
+     * @param string $forUpdateType
+     *
      * @return Array | bool
      *
      * @throws DbException
      */
-    public function fetchRow(string $table, Array | Where $condition, Array $columns = array()) : Array | bool
+    public function fetchRow(string $table, Array | Where $condition, Array $columns = array(), string $forUpdateType = Type::FOR_UPDATE_NO) : Array | bool
     {
         $select = new Select($table);
         $select->columns($columns);
+        if ($forUpdateType != Type::FOR_UPDATE_NO) {
+            $select->forUpdate($forUpdateType);
+        }
+
         if ($condition instanceof Where) {
             $select->where($condition);
             return $this->select($select, $select::SINGLE);
