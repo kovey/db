@@ -21,7 +21,7 @@ class Type
 
     const SQL_FOR_UPDATE = ' FOR UPDATE';
 
-    const SQL_FOR_UPDATE_NOWAIT = 'FOR UPDATE NOWAIT';
+    const SQL_FOR_UPDATE_NOWAIT = ' FOR UPDATE NOWAIT';
 
     public static function getForUpdateSql(string $type) : string
     {
