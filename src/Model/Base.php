@@ -211,24 +211,24 @@ abstract class Base
         }
 
         if (!empty($join)) {
-            foreach ($join as $type => $info) {
+            foreach ($join as $info) {
                 if (empty($info)) {
                     continue;
                 }
 
-                if ($type === 'LEFT_JOIN') {
+                if ($info['type'] === 'LEFT_JOIN') {
                     $select->leftJoin($info['table'], $info['on'], $info['columns']);
                     $totalSelect->leftJoin($info['table'], $info['on']);
                     continue;
                 }
 
-                if ($type === 'INNER_JOIN') {
+                if ($info['type'] === 'INNER_JOIN') {
                     $select->innerJoin($info['table'], $info['on'], $info['columns']);
                     $totalSelect->innerJoin($info['table'], $info['on']);
                     continue;
                 }
 
-                if ($type === 'RIGHT_JOIN') {
+                if ($info['type'] === 'RIGHT_JOIN') {
                     $select->rightJoin($info['table'], $info['on'], $info['columns']);
                     $totalSelect->rightJoin($info['table'], $info['on']);
                     continue;
