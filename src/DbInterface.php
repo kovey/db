@@ -17,16 +17,10 @@ use Kovey\Db\Sql\Select;
 use Kovey\Db\Sql\Delete;
 use Kovey\Db\Sql\BatchInsert;
 use Kovey\Db\Sql\Where;
+use Kovey\Db\ForUpdate\Type;
 
 interface DbInterface
 {
-    /**
-     * @description construct
-     *
-     * @param Array $config
-     */
-    public function __construct(Array $config);
-
     /**
      * @description connect to server
      *
@@ -80,11 +74,13 @@ interface DbInterface
      *
      * @param Array $columns
      *
+     * @param string $forUpdateType
+     *
      * @return Array | bool
      *
      * @throws Exception
      */
-    public function fetchRow(string $table, Array | Where $condition, Array $columns = array()) : Array | bool;
+    public function fetchRow(string $table, Array | Where $condition, Array $columns = array(), string $forUpdateType = Type::FOR_UPDATE_NO) : Array | bool;
 
     /**
      * @description fetch all rows
