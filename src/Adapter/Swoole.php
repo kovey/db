@@ -239,7 +239,7 @@ class Swoole implements AdapterInterface
      */
     public function disconnet() : bool
     {
-        $this->connection->close();
+        return $this->connection->close();
     }
 
     /**

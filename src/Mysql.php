@@ -23,22 +23,27 @@ use Kovey\Db\Exception\DbException;
 use Kovey\Logger\Db as DbLogger;
 use Swoole\Coroutine\MySQL\Statement;
 use Kovey\Db\ForUpdate\Type;
+use Kovey\Library\Trace\TraceInterface;
 
-class Mysql implements DbInterface
+class Mysql implements DbInterface, TraceInterface
 {
     /**
      * @description database adapter
      *
      * @var AdapterInterface
      */
-    private $adapter;
+    private AdapterInterface $adapter;
 
     /**
      * @description is dev
      *
      * @var bool
      */
-    private $isDev = false;
+    private bool $isDev = false;
+
+    private string $traceId;
+
+    private string $spanId;
 
     /**
      * @description construct
@@ -541,5 +546,25 @@ class Mysql implements DbInterface
     public function getLastInsertId() : int
     {
         return $this->adapter->getLastInsertId();
+    }
+    
+    public function setTraceId(string $traceId) : void
+    {
+        $this->traceId = $traceId;
+    }
+
+    public function setSpanId(string $spanId) : void
+    {
+        $this->spanId = $spanId;
+    }
+
+    public function getTraceId() : string
+    {
+        return $this->traceId;
+    }
+
+    public function getSpanId() : string
+    {
+        return $this->spanId;
     }
 }
