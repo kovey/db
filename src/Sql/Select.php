@@ -581,11 +581,11 @@ class Select implements SqlInterface
     /**
      * @description 排序
      *
-     * @param string $order
+     * @param string | array  $order
      *
      * @return Select
      */
-    public function order(string $order) : Select
+    public function order(Array | string $order) : Select
     {
         if (!is_array($order)) {
             $order = array($order);
