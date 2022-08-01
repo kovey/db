@@ -83,11 +83,11 @@ class Having
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | string | float $val
      *
      * @return Having
      */
-    public function gt(string $name, int | string $val) : Having
+    public function gt(string $name, int | string | float $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '>?';
@@ -99,11 +99,11 @@ class Having
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | string | float $val
      *
      * @return Having
      */
-    public function neq(string $name, int | string $val) : Having
+    public function neq(string $name, int | string | float $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '<>?';
@@ -115,11 +115,11 @@ class Having
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | string | float $val
      *
      * @return Having
      */
-    public function ge(string $name, int | string $val) : Having
+    public function ge(string $name, int | string | float $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '>=?';
@@ -131,11 +131,11 @@ class Having
      *
      * @param string $name
      *
-     * @param int | string  $val
+     * @param int | string | float $val
      *
      * @return Having
      */
-    public function lt(string $name, int | string $val) : Having
+    public function lt(string $name, int | string | float $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '<?';
@@ -147,11 +147,11 @@ class Having
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | string | float $val
      *
      * @return Having
      */
-    public function le(string $name, int | string $val) : Having
+    public function le(string $name, int | string | float $val) : Having
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . '<=?';
@@ -163,11 +163,11 @@ class Having
      *
      * @param string $name
      *
-     * @param int | string  $val
+     * @param int | string | float $val
      *
      * @return Having
      */
-    public function eq(string $name, int | string $val) : Having
+    public function eq(string $name, int | string | float $val) : Having
     {
         $this->__set($name, $val);
         return $this;
@@ -236,13 +236,13 @@ class Having
      *
      * @param string $name
      *
-     * @param int | string $start
+     * @param int | string | float $start
      *
-     * @param int | string  $end
+     * @param int | string | float $end
      *
      * @return Having
      */
-    public function between(string $name, int | string $start, int | string $end) : Having
+    public function between(string $name, int | string | float $start, int | string | float $end) : Having
     {
         $this->data[] = $start;
         $this->data[] = $end;

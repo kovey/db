@@ -175,11 +175,11 @@ class Update implements SqlInterface
      *
      * @param string $name
      *
-     * @param int $val
+     * @param int | float $val
      *
      * @return Update
      */
-    public function addSelf(string $name, int $val) : Update
+    public function addSelf(string $name, int | float $val) : Update
     {
         $this->orignalData[$name] = $val;
         $this->addData[$name] = $val;
@@ -191,11 +191,11 @@ class Update implements SqlInterface
      *
      * @param string $name
      *
-     * @param int $val
+     * @param int | float $val
      *
      * @return Update
      */
-    public function subSelf(string $name, int $val)
+    public function subSelf(string $name, int | float $val) : Update
     {
         $this->orignalData[$name] = $val;
         $this->subData[$name] = $val;

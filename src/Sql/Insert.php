@@ -100,7 +100,7 @@ class Insert implements SqlInterface
      *
      * @return null
      */
-    public function __set(string $name, $val)
+    public function __set(string $name, mixed $val)
     {
         $this->orignalData[$name] = $val;
     }
@@ -112,7 +112,7 @@ class Insert implements SqlInterface
      *
      * @return mixed
      */
-    public function __get(string $name)
+    public function __get(string $name) : mixed
     {
         return $this->orignalData[$name] ?? '';
     }

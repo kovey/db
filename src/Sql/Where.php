@@ -83,11 +83,11 @@ class Where
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | float | string $val
      *
      * @return null
      */
-    public function gt(string $name, int | string $val) : Where
+    public function gt(string $name, int | string | float $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' > ?';
@@ -99,11 +99,11 @@ class Where
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | string | float $val
      *
      * @return null
      */
-    public function neq(string $name, int | string $val) : Where
+    public function neq(string $name, int | string | float $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' <> ?';
@@ -115,11 +115,11 @@ class Where
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | string | float $val
      *
      * @return null
      */
-    public function ge(string $name, int | string $val) : Where
+    public function ge(string $name, int | string | float $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' >= ?';
@@ -131,11 +131,11 @@ class Where
      *
      * @param string $name
      *
-     * @param string | int $val
+     * @param string | int | float $val
      *
      * @return null
      */
-    public function lt(string $name, int | string $val) : Where
+    public function lt(string $name, int | string | float $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' < ?';
@@ -147,11 +147,11 @@ class Where
      *
      * @param string $name
      *
-     * @param int | string $val
+     * @param int | string | float $val
      *
      * @return null
      */
-    public function le(string $name, int | string $val) : Where
+    public function le(string $name, int | string | float $val) : Where
     {
         $this->data[] = $val;
         $this->fields[] = $this->format($name) . ' <= ?';
@@ -163,11 +163,11 @@ class Where
      *
      * @param string $name
      *
-     * @param string | int $val
+     * @param string | int | float $val
      *
      * @return null
      */
-    public function eq(string $name, string | int $val) : Where
+    public function eq(string $name, string | int | float $val) : Where
     {
         $this->__set($name, $val);
         return $this;
@@ -236,13 +236,13 @@ class Where
      *
      * @param string $name
      *
-     * @param int | string $start
+     * @param int | string | float $start
      *
-     * @param int | string $end
+     * @param int | string | float $end
      *
      * @return Where
      */
-    public function between(string $name, int | string $start, int | string $end) : Where
+    public function between(string $name, int | string | float $start, int | string | float $end) : Where
     {
         $this->data[] = $start;
         $this->data[] = $end;
